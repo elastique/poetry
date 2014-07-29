@@ -1,6 +1,6 @@
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
-    package="nl.elastique.ormkit">
+    package="nl.elastique.poetry.web">
 
     <application android:allowBackup="true" />
 
