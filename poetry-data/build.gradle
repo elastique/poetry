@@ -1,0 +1,53 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion androidCompileSdkVersion
+    buildToolsVersion androidBuildToolsVersion
+
+    defaultConfig {
+        minSdkVersion androidMinSdkVersion
+        targetSdkVersion androidTargetSdkVersion
+    }
+}
+
+ext {
+    ormliteVersion = '4.48';
+    jacksonVersion = '2.3.+';
+}
+
+dependencies {
+    compile (
+        project(':poetry-core'),
+        project(':poetry-web'),
+
+        // ORM
+        [group: 'com.j256.ormlite', name: 'ormlite-core', version: ormliteVersion],
+        [group: 'com.j256.ormlite', name: 'ormlite-android', version: ormliteVersion],
+
+        // JSON
+        [group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: jacksonVersion],
+        [group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: jacksonVersion],
+        [group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: jacksonVersion],
+
+        [group: 'org.slf4j' , name: 'slf4j-api' , version: slf4jVersion]
+    )
+}
+
+android.libraryVariants.all { variant ->
+    task("generate${variant.name.capitalize()}Javadoc", type: Javadoc) {
+        title = "Documentation for Android $android.defaultConfig.versionName b$android.defaultConfig.versionCode"
+        destinationDir = new File("${project.getBuildDir()}/outputs/doc/", variant.baseName)
+        source = variant.javaCompile.source
+
+        ext.androidJar = "${android.sdkDirectory}/platforms/${android.compileSdkVersion}/android.jar"
+        classpath = files(variant.javaCompile.classpath.files) + files(ext.androidJar)
+
+        description "Generates Javadoc for $variant.name."
+
+        options.memberLevel = org.gradle.external.javadoc.JavadocMemberLevel.PRIVATE
+        options.links("http://docs.oracle.com/javase/7/docs/api/");
+        options.links("http://developer.android.com/reference/reference/");
+        exclude '**/BuildConfig.java'
+        exclude '**/R.java'
+    }
+}
