@@ -9,14 +9,13 @@ buildscript {
     }
 }
 
-repositories {
-    mavenCentral()
-}
+allprojects {
+    repositories {
+        mavenCentral()
+    }
 
-apply from: '../androidlibrary.gradle'
+    group = 'nl.elastique'
+    version = '0.1.0'
 
-dependencies {
-    compile (
-        [group: 'org.slf4j' , name: 'slf4j-api' , version: slf4jVersion]
-    )
+    slf4jVersion = '1.7.+'
 }
