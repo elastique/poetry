@@ -1,0 +1,15 @@
+ext {
+    slf4jVersion = '1.7.+'
+}
+
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 20
+    buildToolsVersion '20'
+
+    defaultConfig {
+        minSdkVersion 10
+        targetSdkVersion 20
+    }
+}

@@ -13,7 +13,8 @@ repositories {
     mavenCentral()
 }
 
-apply from: '../androidlibrary.gradle'
+apply from: '../android-library.gradle'
+apply from: '../maven-push.gradle'
 
 ext {
     ormliteVersion = '4.48';
