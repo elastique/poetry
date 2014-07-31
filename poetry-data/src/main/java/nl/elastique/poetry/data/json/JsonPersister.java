@@ -468,7 +468,7 @@ public class JsonPersister
                 throw new SQLiteException(String.format("failed to insert %s with id %s=%s", field.getType().getName(), db_field_name, object_id.toString()));
             }
 
-            sLogger.info(String.format("inserted %s (id=%s/%d)", field.getType().getSimpleName(), object_id.toString(), inserted_id));
+            sLogger.info(String.format("prepared %s row (id=%s/%d)", tableName, object_id.toString(), inserted_id));
 
             return object_id; // don't return inserted_id, because it's always long (while the target type might be int or another type)
         }
