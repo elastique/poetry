@@ -88,6 +88,10 @@ if (hasProperty('GROUP'))
                             }
                         }
                     }
+
+                    pom*.whenConfigured { pom ->
+                        pom.dependencies.removeAll { dep -> dep.artifactId == 'support-v4' }
+                    }
                 }
             }
         }
