@@ -94,8 +94,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper
         }
         catch (SQLException e)
         {
-            sLogger.error(DatabaseHelper.class.getName(), "Can't drop databases", e);
-            throw new RuntimeException(e);
+            sLogger.error("can't drop table", e);
         }
     }
 
