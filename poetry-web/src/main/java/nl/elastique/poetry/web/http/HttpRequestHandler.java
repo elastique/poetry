@@ -136,7 +136,7 @@ public class HttpRequestHandler
             callback.onFailure(throwable);
         }
 
-        broadcast(context, Broadcasts.ACTION_FAILURE, throwable);
+        broadcast(context, Broadcasts.ACTION_FAILURE);
     }
 
     protected void handleSuccess(final Context context, @Nullable final HttpResponse response, @Nullable final Callback<HttpResponse> listener)
@@ -147,12 +147,6 @@ public class HttpRequestHandler
         }
 
         broadcast(context, Broadcasts.ACTION_SUCCESS);
-    }
-
-    private static void broadcast(Context context, String action, Throwable throwable)
-    {
-        Intent intent = (new Intent()).setAction(action).putExtra("error", throwable);
-        context.sendBroadcast(intent);
     }
 
     private static void broadcast(Context context, String action)
