@@ -13,7 +13,7 @@ import org.json.JSONTokener;
 import java.io.IOException;
 
 import nl.elastique.poetry.web.http.HttpRequestHandler;
-import nl.elastique.poetry.core.interfaces.Callback;
+import nl.elastique.poetry.core.lang.Callback;
 
 /**
  * This HttpRequestJsonPersister starts an HTTP request, parses the result as JSON and then processes all mappings.

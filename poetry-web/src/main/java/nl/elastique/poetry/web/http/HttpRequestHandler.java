@@ -14,7 +14,7 @@ import java.io.IOException;
 
 import nl.elastique.poetry.core.annotations.Nullable;
 import nl.elastique.poetry.web.http.exceptions.HttpStatusException;
-import nl.elastique.poetry.core.interfaces.Callback;
+import nl.elastique.poetry.core.lang.Callback;
 
 /**
  * Wraps a request so it:

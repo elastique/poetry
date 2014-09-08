@@ -1,4 +1,4 @@
-package nl.elastique.poetry.core.interfaces;
+package nl.elastique.poetry.core.lang;
 
 /**
  * A generic callback that provides a value on success and a Throwable on error.

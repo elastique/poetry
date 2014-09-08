@@ -3,9 +3,7 @@ package nl.elastique.poetry.data.json;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Looper;
 
-import nl.elastique.poetry.core.interfaces.Callback;
-import nl.elastique.poetry.data.json.JsonPathException;
-import nl.elastique.poetry.data.json.JsonPathResolver;
+import nl.elastique.poetry.core.lang.Callback;
 
 import org.json.JSONArray;
 import org.json.JSONException;
