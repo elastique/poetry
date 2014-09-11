@@ -2,6 +2,7 @@ package nl.elastique.poetry.web.http;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.content.LocalBroadcastManager;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -152,6 +153,6 @@ public class HttpRequestHandler
     private static void broadcast(Context context, String action)
     {
         Intent intent = (new Intent()).setAction(action);
-        context.sendBroadcast(intent);
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 }
