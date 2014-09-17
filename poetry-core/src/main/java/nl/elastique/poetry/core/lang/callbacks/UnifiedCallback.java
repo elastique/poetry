@@ -1,6 +1,7 @@
-package nl.elastique.poetry.core.lang;
+package nl.elastique.poetry.core.lang.callbacks;
 
 import nl.elastique.poetry.core.annotations.Nullable;
+import nl.elastique.poetry.core.lang.Callback;
 
 /**
  * A class that implements Callback<T> and provides a single onResult method that

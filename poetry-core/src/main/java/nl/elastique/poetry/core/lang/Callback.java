@@ -12,7 +12,7 @@ public interface Callback<Type>
      * Called when an operation has succeeded
      *
      * @param type the returned data (this could be null, depending on the implementation)
-     */
+    */
     public void onSuccess(Type type);
 
     /**
