@@ -45,7 +45,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper
         return OpenHelperManager.getHelper(context, DatabaseHelper.class);
     }
 
-    public static DatabaseHelper getHelper(Context context, Class<? extends DatabaseHelper> classObject)
+    public static <T extends DatabaseHelper> T getHelper(Context context, Class<T> classObject)
     {
         return OpenHelperManager.getHelper(context, classObject);
     }
