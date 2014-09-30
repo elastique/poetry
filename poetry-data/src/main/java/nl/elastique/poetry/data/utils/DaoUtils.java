@@ -4,12 +4,35 @@ import com.j256.ormlite.dao.Dao;
 
 public class DaoUtils
 {
-    public static void addColumn(Dao<?, ?> dao, String name, String type) throws java.sql.SQLException
+    /**
+     * Docs: http://www.sqlite.org/datatype3.html
+     */
+    public enum ColumnType
+    {
+        INTEGER, // for int and boolean
+        REAL, // float,  double, etc.
+        TEXT, // String, etc.
+        BLOB,
+        NUMERIC
+    }
+
+    public static void addColumn(Dao<?, ?> dao, String name, ColumnType columnType) throws java.sql.SQLException
     {
         String query = String.format("ALTER TABLE %s ADD COLUMN %s %s",
                 OrmliteUtils.getTableName(dao.getDataClass()),
                 name,
-                type);
+                columnType.toString());
+
+        dao.executeRawNoArgs(query);
+    }
+
+    public static void addColumn(Dao<?, ?> dao, String name, ColumnType columnType, String defaultValue) throws java.sql.SQLException
+    {
+        String query = String.format("ALTER TABLE %s ADD COLUMN %s %s DEFAULT %s",
+                OrmliteUtils.getTableName(dao.getDataClass()),
+                name,
+                columnType.toString(),
+                defaultValue);
 
         dao.executeRawNoArgs(query);
     }
