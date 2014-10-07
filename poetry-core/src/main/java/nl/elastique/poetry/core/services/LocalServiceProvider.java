@@ -55,15 +55,19 @@ public class LocalServiceProvider
      *
      * It is not guaranteed on which thread the {@link ServiceCallback} is accessed.
      */
-    public static <S extends Service> void bindService(Context context, Class<S> classObject, int options, final ServiceCallback<S> callback)
+    public static <S extends Service> void bindService(Context context, final Class<S> classObject, int options, final ServiceCallback<S> callback)
     {
         final LocalServiceConnector<S> local_service_provider = new LocalServiceConnector<S>(classObject);
+
+        sLogger.debug(String.format("bindingService %s", classObject.getName()));
 
         local_service_provider.bindService(context, options, new Callback<S>()
         {
             @Override
             public void onSuccess(final S service)
             {
+                sLogger.debug(String.format("bindingService onSuccess %s", classObject.getName()));
+
                 ServiceUnbinder unbinder = new ServiceUnbinderImpl<S>(local_service_provider);
 
                 callback.onService(service, unbinder);
@@ -72,7 +76,9 @@ public class LocalServiceProvider
             @Override
             public void onFailure(Throwable caught)
             {
-                sLogger.error("failed to bind service: " + caught.getMessage());
+                String message = (caught != null && caught.getMessage() != null) ? caught.getMessage() : "[unknown error]";
+
+                sLogger.debug(String.format("bindingService onFailure %s", message));
             }
         });
     }
