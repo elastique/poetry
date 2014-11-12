@@ -11,9 +11,9 @@ public interface Callback<Type>
     /**
      * Called when an operation has succeeded
      *
-     * @param type the returned data (this could be null, depending on the implementation)
+     * @param object the returned data (this could be null, depending on the implementation)
     */
-    public void onSuccess(Type type);
+    public void onSuccess(Type object);
 
     /**
      * Called when an operation has failed
