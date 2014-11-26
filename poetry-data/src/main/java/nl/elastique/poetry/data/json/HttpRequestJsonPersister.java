@@ -36,6 +36,11 @@ public class HttpRequestJsonPersister
         mMappedJsonPersister = new MappedJsonPersister(writableDatabase, options);
     }
 
+    public HttpRequestJsonPersister(SQLiteDatabase writableDatabase)
+    {
+        this(writableDatabase, 0);
+    }
+
     public HttpRequestJsonPersister addMapping(String path, Class<?> type)
     {
         mMappedJsonPersister.addMapping(path, type);

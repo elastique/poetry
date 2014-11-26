@@ -83,6 +83,11 @@ public class MappedJsonPersister
         }
     }
 
+    public MappedJsonPersister(SQLiteDatabase writableDatabase)
+    {
+        this(writableDatabase, 0);
+    }
+
     public MappedJsonPersister addMapping(String path, Class<?> type)
     {
         mMappings.add(new PathMapping(path, type));
