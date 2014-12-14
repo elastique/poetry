@@ -60,9 +60,9 @@ public class HttpRequestJsonPersister
         return this;
     }
 
-    public void persist(Context context, HttpRequestHandler httpRequest, Callback<JSONObject> callback)
+    public void persist(Context context, HttpRequestHandler httpRequestHandler, Callback<JSONObject> callback)
     {
-        httpRequest.execute(context, new HttpResponseCallback(callback));
+        httpRequestHandler.execute(context, new HttpResponseCallback(callback));
     }
 
     private class HttpResponseCallback implements Callback<HttpResponse>
