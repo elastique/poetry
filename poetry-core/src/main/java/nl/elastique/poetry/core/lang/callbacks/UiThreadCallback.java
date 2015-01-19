@@ -1,6 +1,5 @@
 package nl.elastique.poetry.core.lang.callbacks;
 
-import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 
@@ -18,27 +17,41 @@ public abstract class UiThreadCallback<Type> implements Callback<Type>
     @Override
     public void onSuccess(final Type object)
     {
-        runOnUiThread(new Runnable()
+        if (Looper.myLooper() == Looper.getMainLooper())
         {
-            @Override
-            public void run()
+            onSuccessUiThread(object);
+        }
+        else
+        {
+            runOnUiThread(new Runnable()
             {
-                onSuccessUiThread(object);
-            }
-        });
+                @Override
+                public void run()
+                {
+                    onSuccessUiThread(object);
+                }
+            });
+        }
     }
 
     @Override
     public void onFailure(final Throwable caught)
     {
-        runOnUiThread(new Runnable()
+        if (Looper.myLooper() == Looper.getMainLooper())
         {
-            @Override
-            public void run()
+            onFailureUiThread(caught);
+        }
+        else
+        {
+            runOnUiThread(new Runnable()
             {
-                onFailureUiThread(caught);
-            }
-        });
+                @Override
+                public void run()
+                {
+                    onFailureUiThread(caught);
+                }
+            });
+        }
     }
 
     protected abstract void onSuccessUiThread(Type type);
