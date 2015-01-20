@@ -11,7 +11,10 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
+import nl.elastique.poetry.core.annotations.Nullable;
 import nl.elastique.poetry.web.http.HttpRequestHandler;
 import nl.elastique.poetry.core.lang.Callback;
 
@@ -21,6 +24,8 @@ import nl.elastique.poetry.core.lang.Callback;
 public class HttpRequestJsonPersister
 {
     private final MappedJsonPersister mMappedJsonPersister;
+
+    private final List<Callback<Object[]>> mMappingCallbacks = new ArrayList<>();
 
     /**
      * @param writableDatabase
@@ -56,7 +61,13 @@ public class HttpRequestJsonPersister
      */
     public HttpRequestJsonPersister addMapping(String path, Class<?> type, Callback<Object[]> callback)
     {
+        if (callback != null)
+        {
+            mMappingCallbacks.add(callback);
+        }
+
         mMappedJsonPersister.addMapping(path, type, callback);
+
         return this;
     }
 
@@ -65,13 +76,23 @@ public class HttpRequestJsonPersister
         httpRequestHandler.execute(context, new HttpResponseCallback(callback));
     }
 
+    public void persist(Context context, HttpRequestHandler httpRequestHandler)
+    {
+        httpRequestHandler.execute(context, new HttpResponseCallback());
+    }
+
     private class HttpResponseCallback implements Callback<HttpResponse>
     {
-        private final Callback<JSONObject> mCallback;
+        private @Nullable final Callback<JSONObject> mCallback;
 
         public HttpResponseCallback(Callback<JSONObject> callback)
         {
             mCallback = callback;
+        }
+
+        public HttpResponseCallback()
+        {
+            mCallback = null;
         }
 
         @Override
@@ -86,22 +107,34 @@ public class HttpRequestJsonPersister
 
                 mMappedJsonPersister.persist(json_result);
 
-                mCallback.onSuccess(json_result);
+                if (mCallback != null)
+                {
+                    mCallback.onSuccess(json_result);
+                }
             }
-            catch (IOException e)
+            catch (IOException|JSONException e)
             {
-                mCallback.onFailure(e);
-            }
-            catch (JSONException e)
-            {
-                mCallback.onFailure(e);
+                processFailure(e);
             }
         }
 
         @Override
         public void onFailure(Throwable caught)
         {
-            mCallback.onFailure(caught);
+            processFailure(caught);
+        }
+
+        private void processFailure(Throwable caught)
+        {
+            for (Callback<Object[]> callback : mMappingCallbacks)
+            {
+                callback.onFailure(caught);
+            }
+
+            if (mCallback != null)
+            {
+                mCallback.onFailure(caught);
+            }
         }
     }
 }
