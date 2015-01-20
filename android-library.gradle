@@ -24,4 +24,9 @@ android {
         exclude 'LICENSE.txt'
         exclude 'LICENSE'
     }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
 }
