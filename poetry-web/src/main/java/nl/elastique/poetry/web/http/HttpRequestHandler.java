@@ -61,8 +61,6 @@ public class HttpRequestHandler
      */
     private void executeSynchronous(Context context, Callback<HttpResponse> callback)
     {
-        HttpResponse response = null;
-
         try
         {
             broadcast(context, Broadcasts.ACTION_BEGIN);
@@ -72,7 +70,7 @@ public class HttpRequestHandler
                 sLogger.debug(String.format("started %s %s", mHttpRequest.getMethod(), mHttpRequest.getRequestLine().getUri().toString()));
             }
 
-            response = mHttpClient.execute(mHttpRequest);
+            HttpResponse response = mHttpClient.execute(mHttpRequest);
 
             if (response == null)
             {
@@ -93,11 +91,7 @@ public class HttpRequestHandler
 
             handleSuccess(context, response, callback);
         }
-        catch (IOException e)
-        {
-            handleFailure(context, callback, e);
-        }
-        catch (HttpStatusException e)
+        catch (IOException | HttpStatusException e)
         {
             handleFailure(context, callback, e);
         }

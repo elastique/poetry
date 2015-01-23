@@ -112,7 +112,7 @@ public class HttpRequestJsonPersister
                     mCallback.onSuccess(json_result);
                 }
             }
-            catch (IOException|JSONException e)
+            catch (IOException | JSONException e)
             {
                 processFailure(e);
             }
