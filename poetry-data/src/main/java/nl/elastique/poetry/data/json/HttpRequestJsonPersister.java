@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nl.elastique.poetry.core.annotations.Nullable;
+import nl.elastique.poetry.core.lang.callbacks.FailureCallback;
 import nl.elastique.poetry.web.http.HttpRequestHandler;
 import nl.elastique.poetry.core.lang.Callback;
 
@@ -26,6 +27,15 @@ public class HttpRequestJsonPersister
     private final MappedJsonPersister mMappedJsonPersister;
 
     private final List<Callback<Object[]>> mMappingCallbacks = new ArrayList<>();
+
+    private State mState = State.IDLE;
+
+    private enum State
+    {
+        IDLE,
+        PERSISTING,
+        ERROR
+    }
 
     /**
      * @param writableDatabase
@@ -48,7 +58,18 @@ public class HttpRequestJsonPersister
 
     public HttpRequestJsonPersister addMapping(String path, Class<?> type)
     {
-        mMappedJsonPersister.addMapping(path, type);
+        Callback<Object[]> callback = new FailureCallback<Object[]>()
+        {
+            @Override
+            public void onFailure(Throwable caught)
+            {
+                mState = State.ERROR;
+            }
+        };
+
+        mMappingCallbacks.add(callback);
+        mMappedJsonPersister.addMapping(path, type, callback);
+
         return this;
     }
 
@@ -59,21 +80,34 @@ public class HttpRequestJsonPersister
      * @param callback onFailure receives: JsonPathException, org.json.JSONException
      * @return
      */
-    public HttpRequestJsonPersister addMapping(String path, Class<?> type, Callback<Object[]> callback)
+    public HttpRequestJsonPersister addMapping(String path, Class<?> type, final Callback<Object[]> callback)
     {
-        if (callback != null)
+        Callback<Object[]> proxy_callback = new Callback<Object[]>()
         {
-            mMappingCallbacks.add(callback);
-        }
+            @Override
+            public void onSuccess(Object[] object)
+            {
+                callback.onSuccess(object);
+            }
 
-        mMappedJsonPersister.addMapping(path, type, callback);
+            @Override
+            public void onFailure(Throwable caught)
+            {
+                callback.onFailure(caught);
+
+                mState = State.ERROR;
+            }
+        };
+
+        mMappingCallbacks.add(proxy_callback);
+        mMappedJsonPersister.addMapping(path, type, proxy_callback);
 
         return this;
     }
 
-    public void persist(Context context, HttpRequestHandler httpRequestHandler, Callback<JSONObject> callback)
+    public void persist(Context context, HttpRequestHandler httpRequestHandler, Callback<JSONObject> jsonFallback)
     {
-        httpRequestHandler.execute(context, new HttpResponseCallback(callback));
+        httpRequestHandler.execute(context, new HttpResponseCallback(jsonFallback));
     }
 
     public void persist(Context context, HttpRequestHandler httpRequestHandler)
@@ -83,16 +117,16 @@ public class HttpRequestJsonPersister
 
     private class HttpResponseCallback implements Callback<HttpResponse>
     {
-        private @Nullable final Callback<JSONObject> mCallback;
+        private @Nullable final Callback<JSONObject> mJsonCallback;
 
         public HttpResponseCallback(Callback<JSONObject> callback)
         {
-            mCallback = callback;
+            mJsonCallback = callback;
         }
 
         public HttpResponseCallback()
         {
-            mCallback = null;
+            mJsonCallback = null;
         }
 
         @Override
@@ -100,6 +134,8 @@ public class HttpRequestJsonPersister
         {
             try
             {
+                mState = State.PERSISTING;
+
                 final String data = EntityUtils.toString(response.getEntity());
 
                 JSONTokener tokener = new JSONTokener(data);
@@ -107,15 +143,24 @@ public class HttpRequestJsonPersister
 
                 mMappedJsonPersister.persist(json_result);
 
-                if (mCallback != null)
+                if (mJsonCallback != null)
                 {
-                    mCallback.onSuccess(json_result);
+                    if (State.ERROR.equals(mState))
+                    {
+                        mJsonCallback.onFailure(new Exception("one or more mappings failed"));
+                    }
+                    else
+                    {
+                        mJsonCallback.onSuccess(json_result);
+                    }
                 }
             }
             catch (IOException | JSONException e)
             {
                 processFailure(e);
             }
+
+            mState = State.IDLE;
         }
 
         @Override
@@ -131,9 +176,9 @@ public class HttpRequestJsonPersister
                 callback.onFailure(caught);
             }
 
-            if (mCallback != null)
+            if (mJsonCallback != null)
             {
-                mCallback.onFailure(caught);
+                mJsonCallback.onFailure(caught);
             }
         }
     }

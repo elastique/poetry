@@ -107,7 +107,7 @@ public class MappedJsonPersister
         return this;
     }
 
-    public void persist(final JSONObject object) throws JSONException
+    public void persist(final JSONObject object)
     {
         if (Looper.myLooper() == Looper.getMainLooper())
         {
