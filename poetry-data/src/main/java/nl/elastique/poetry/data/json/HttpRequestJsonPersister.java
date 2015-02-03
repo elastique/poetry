@@ -43,11 +43,6 @@ public class HttpRequestJsonPersister
      */
     public HttpRequestJsonPersister(SQLiteDatabase writableDatabase, int options)
     {
-        if (Looper.myLooper() != Looper.getMainLooper())
-        {
-            throw new RuntimeException("must create RestToSqlitePersister on the main thread");
-        }
-
         mMappedJsonPersister = new MappedJsonPersister(writableDatabase, options);
     }
 

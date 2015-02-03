@@ -76,11 +76,6 @@ public class MappedJsonPersister
     {
         mDatabase = writableDatabase;
         mOptions = options;
-
-        if (Looper.myLooper() != Looper.getMainLooper())
-        {
-            throw new RuntimeException("must create RestToSqlitePersister on the main thread");
-        }
     }
 
     public MappedJsonPersister(SQLiteDatabase writableDatabase)
