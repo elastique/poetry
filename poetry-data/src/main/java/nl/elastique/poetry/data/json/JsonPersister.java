@@ -8,11 +8,6 @@ import android.database.sqlite.SQLiteException;
 import android.os.Build;
 import android.os.Looper;
 
-import nl.elastique.poetry.data.json.annotations.ForeignCollectionFieldSingleTarget;
-import nl.elastique.poetry.data.json.annotations.ManyToManyField;
-import nl.elastique.poetry.data.json.JsonUtils;
-import nl.elastique.poetry.data.utils.OrmliteUtils;
-import nl.elastique.poetry.data.utils.QueryUtils;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
@@ -27,6 +22,11 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import nl.elastique.poetry.data.json.annotations.ForeignCollectionFieldSingleTarget;
+import nl.elastique.poetry.data.json.annotations.ManyToManyField;
+import nl.elastique.poetry.data.utils.OrmliteUtils;
+import nl.elastique.poetry.data.utils.QueryUtils;
 
 /**
  * Persist a JSONObject or JSONArray to an SQLite database by parsing annotations (both from OrmLite and custom ones).
