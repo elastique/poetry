@@ -157,7 +157,10 @@ public class JsonPersister
         }
         finally
         {
-            mDatabase.endTransaction();
+            if (mDatabase.inTransaction())
+            {
+                mDatabase.endTransaction();
+            }
         }
     }
 
@@ -206,7 +209,10 @@ public class JsonPersister
         }
         finally
         {
-            mDatabase.endTransaction();
+            if (mDatabase.inTransaction())
+            {
+                mDatabase.endTransaction();
+            }
         }
     }
 
