@@ -123,7 +123,11 @@ public class JsonPersister
 
         try
         {
-            mDatabase.enableWriteAheadLogging();
+            if (!mDatabase.inTransaction())
+            {
+                mDatabase.enableWriteAheadLogging();
+            }
+
             mDatabase.beginTransactionNonExclusive();
 
             IdType id = persistObjectInternal(modelClass, jsonObject);
@@ -134,7 +138,10 @@ public class JsonPersister
         }
         finally
         {
-            mDatabase.endTransaction();
+            if (mDatabase.inTransaction())
+            {
+                mDatabase.endTransaction();
+            }
         }
     }
 
@@ -194,7 +201,12 @@ public class JsonPersister
     {
         try
         {
-            mDatabase.enableWriteAheadLogging();
+            // Write Ahead Logging (WAL) mode cannot be enabled or disabled while there are transactions in progress.
+            if (!mDatabase.inTransaction())
+            {
+                mDatabase.enableWriteAheadLogging();
+            }
+
             mDatabase.beginTransactionNonExclusive();
 
             List<IdType> id_list = persistArrayOfObjects(modelClass, jsonArray);
@@ -238,7 +250,10 @@ public class JsonPersister
         }
         finally
         {
-            mDatabase.endTransaction();
+            if (mDatabase.inTransaction())
+            {
+                mDatabase.endTransaction();
+            }
         }
     }
 
