@@ -116,11 +116,6 @@ public class JsonPersister
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     private <IdType> IdType persistObjectApi11(Class<?> modelClass, JSONObject jsonObject) throws JSONException
     {
-        if (mDatabase.inTransaction())
-        {
-            throw new RuntimeException("transaction already in progress");
-        }
-
         try
         {
             if (!mDatabase.inTransaction())
@@ -147,11 +142,6 @@ public class JsonPersister
 
     private <IdType> IdType persistObjectApiDeprecate(Class<?> modelClass, JSONObject jsonObject) throws JSONException
     {
-        if (mDatabase.inTransaction())
-        {
-            throw new RuntimeException("transaction already in progress");
-        }
-
         try
         {
             mDatabase.beginTransaction();
