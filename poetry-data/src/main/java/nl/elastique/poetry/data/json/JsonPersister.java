@@ -113,54 +113,6 @@ public class JsonPersister
         }
     }
 
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    private <IdType> IdType persistObjectApi11(Class<?> modelClass, JSONObject jsonObject) throws JSONException
-    {
-        try
-        {
-            if (!mDatabase.inTransaction())
-            {
-                mDatabase.enableWriteAheadLogging();
-            }
-
-            mDatabase.beginTransactionNonExclusive();
-
-            IdType id = persistObjectInternal(modelClass, jsonObject);
-
-            mDatabase.setTransactionSuccessful();
-
-            return id;
-        }
-        finally
-        {
-            if (mDatabase.inTransaction())
-            {
-                mDatabase.endTransaction();
-            }
-        }
-    }
-
-    private <IdType> IdType persistObjectApiDeprecate(Class<?> modelClass, JSONObject jsonObject) throws JSONException
-    {
-        try
-        {
-            mDatabase.beginTransaction();
-
-            IdType id = persistObjectInternal(modelClass, jsonObject);
-
-            mDatabase.setTransactionSuccessful();
-
-            return id;
-        }
-        finally
-        {
-            if (mDatabase.inTransaction())
-            {
-                mDatabase.endTransaction();
-            }
-        }
-    }
-
     /**
      * Recursively persist this object and all its children.
      * @throws JSONException when something went wrong through parsing, this also fails the database transaction and results in no data changes
@@ -186,16 +138,55 @@ public class JsonPersister
      * Recursively persist the array and all its object's children.
      * @throws JSONException when something went wrong through parsing, this also fails the database transaction and results in no data changes
      */
+    public <IdType> List<IdType> persistArray(Class<?> modelClass, JSONArray jsonArray) throws JSONException
+    {
+        if (Looper.myLooper() == Looper.getMainLooper())
+        {
+            sLogger.warn("please call persistArray() on a background thread");
+        }
+
+        // TODO: make Transaction object (that handles all API levels), so we don't need a separate code path
+        if (Build.VERSION.SDK_INT >= 11)
+        {
+            return persistArrayApi11(modelClass, jsonArray);
+        }
+        else
+        {
+            return persistArrayDeprecate(modelClass, jsonArray);
+        }
+    }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    private <IdType> IdType persistObjectApi11(Class<?> modelClass, JSONObject jsonObject) throws JSONException
+    {
+        try
+        {
+            enableWriteAheadLogging();
+
+            mDatabase.beginTransactionNonExclusive();
+
+            IdType id = persistObjectInternal(modelClass, jsonObject);
+
+            mDatabase.setTransactionSuccessful();
+
+            return id;
+        }
+        finally
+        {
+            endTransaction();
+        }
+    }
+
+    /**
+     * Recursively persist the array and all its object's children.
+     * @throws JSONException when something went wrong through parsing, this also fails the database transaction and results in no data changes
+     */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public <IdType> List<IdType> persistArrayApi11(Class<?> modelClass, JSONArray jsonArray) throws JSONException
     {
         try
         {
-            // Write Ahead Logging (WAL) mode cannot be enabled or disabled while there are transactions in progress.
-            if (!mDatabase.inTransaction())
-            {
-                mDatabase.enableWriteAheadLogging();
-            }
+            enableWriteAheadLogging();
 
             mDatabase.beginTransactionNonExclusive();
 
@@ -211,10 +202,25 @@ public class JsonPersister
         }
         finally
         {
-            if (mDatabase.inTransaction())
-            {
-                mDatabase.endTransaction();
-            }
+            endTransaction();
+        }
+    }
+
+    private <IdType> IdType persistObjectApiDeprecate(Class<?> modelClass, JSONObject jsonObject) throws JSONException
+    {
+        try
+        {
+            mDatabase.beginTransaction();
+
+            IdType id = persistObjectInternal(modelClass, jsonObject);
+
+            mDatabase.setTransactionSuccessful();
+
+            return id;
+        }
+        finally
+        {
+            endTransaction();
         }
     }
 
@@ -240,31 +246,46 @@ public class JsonPersister
         }
         finally
         {
-            if (mDatabase.inTransaction())
+            endTransaction();
+        }
+    }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    private void enableWriteAheadLogging()
+    {
+        try
+        {
+            // Write Ahead Logging (WAL) mode cannot be enabled or disabled while there are transactions in progress.
+            if (!mDatabase.inTransaction())
             {
-                mDatabase.endTransaction();
+                mDatabase.enableWriteAheadLogging();
+            }
+        }
+        catch (IllegalStateException e)
+        {
+            /*
+             * To catch: java.lang.IllegalStateException: Write Ahead Logging (WAL) mode cannot be enabled or disabled while there are transactions in progress.  Finish all transactions and release all active database connections first.
+             * This exception still gets triggered, possibly because the transaction is started right after inTransaction() is checked.
+             */
+            if (Build.VERSION.SDK_INT >= 16 && !mDatabase.isWriteAheadLoggingEnabled())
+            {
+                sLogger.warn("Write Ahead Logging is not enabled because a transaction was active");
             }
         }
     }
 
-    /**
-     * Recursively persist the array and all its object's children.
-     * @throws JSONException when something went wrong through parsing, this also fails the database transaction and results in no data changes
-     */
-    public <IdType> List<IdType> persistArray(Class<?> modelClass, JSONArray jsonArray) throws JSONException
+    private void endTransaction()
     {
-        if (Looper.myLooper() == Looper.getMainLooper())
+        if (mDatabase.inTransaction())
         {
-            sLogger.warn("please call persistArray() on a background thread");
-        }
-
-        if (Build.VERSION.SDK_INT >= 11)
-        {
-            return persistArrayApi11(modelClass, jsonArray);
-        }
-        else
-        {
-            return persistArrayDeprecate(modelClass, jsonArray);
+            try
+            {
+                mDatabase.endTransaction();
+            }
+            catch (IllegalStateException e)
+            {
+                sLogger.warn("endTransaction() failed - this does not mean there was a rollback, it just means that the transaction was closed earlier than expeced.");
+            }
         }
     }
 
