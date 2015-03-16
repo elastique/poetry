@@ -21,7 +21,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper
 
     private static DatabaseConfiguration sConfiguration;
 
-    protected static final HashMap<Class<?>, Dao<?, ?>> sCachedDaos = new HashMap<Class<?>, Dao<?,?>>();
+    protected static final HashMap<Class<?>, Dao<?, ?>> sCachedDaos = new HashMap<>();
 
     public DatabaseHelper(Context context)
     {

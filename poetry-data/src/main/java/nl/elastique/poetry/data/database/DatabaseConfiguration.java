@@ -2,7 +2,7 @@ package nl.elastique.poetry.data.database;
 
 public class DatabaseConfiguration
 {
-    private static final String sDefaultName = "database";
+    public static final String sDefaultName = "database";
 
     private final Class<?>[] mModelClasses;
 
