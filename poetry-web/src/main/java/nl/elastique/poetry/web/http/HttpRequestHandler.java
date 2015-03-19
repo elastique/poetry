@@ -67,7 +67,7 @@ public class HttpRequestHandler
 
             if (sLogger.isDebugEnabled())
             {
-                sLogger.debug(String.format("started %s %s", mHttpRequest.getMethod(), mHttpRequest.getRequestLine().getUri().toString()));
+                sLogger.debug("started {} {}", mHttpRequest.getMethod(), mHttpRequest.getRequestLine().getUri());
             }
 
             HttpResponse response = mHttpClient.execute(mHttpRequest);
@@ -79,7 +79,7 @@ public class HttpRequestHandler
 
             if (sLogger.isDebugEnabled())
             {
-                sLogger.debug(String.format("finished %s %s (status code %d)", mHttpRequest.getMethod(), mHttpRequest.getRequestLine().getUri().toString(), response.getStatusLine().getStatusCode()));
+                sLogger.debug("finished {} {} (status code {})", mHttpRequest.getMethod(), mHttpRequest.getRequestLine().getUri(), response.getStatusLine().getStatusCode());
             }
 
             int status_code = response.getStatusLine().getStatusCode();
@@ -123,7 +123,7 @@ public class HttpRequestHandler
         if (sLogger.isDebugEnabled())
         {
             String error_message = throwable != null ? throwable.getMessage() : "unknown error";
-            sLogger.warn(String.format("failed: %s %s (%s)", mHttpRequest.getMethod(), mHttpRequest.getRequestLine().getUri().toString(), error_message));
+            sLogger.warn("failed: {} {} ({})", mHttpRequest.getMethod(), mHttpRequest.getRequestLine().getUri(), error_message);
         }
 
         if (callback != null)

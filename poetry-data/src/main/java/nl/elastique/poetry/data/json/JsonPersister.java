@@ -330,7 +330,7 @@ public class JsonPersister
             {
                 if (!Option.isEnabled(mOptions, Option.DISABLE_IGNORED_ATTRIBUTES_WARNING))
                 {
-                    sLogger.warn("ignored attribute " + json_key + " because it wasn't found in " + modelClass.getSimpleName() + " as a DatabaseField");
+                    sLogger.warn("ignored attribute {} because it wasn't found in {} as a DatabaseField", json_key, modelClass.getSimpleName());
                 }
 
                 continue;
@@ -397,13 +397,12 @@ public class JsonPersister
             mDatabase.update(table_name, values, id_field_name + " = ?", new String[]{object_id.toString()});
         }
 
-        sLogger.info(String.format("imported %s (%s=%s)", modelClass.getSimpleName(), id_field_name, object_id.toString()));
+        sLogger.info("imported {} ({}={})", modelClass.getSimpleName(), id_field_name, object_id);
 
         // Process foreign collection fields for inserted object
         for (ForeignCollectionMapping foreign_collection_mapping : foreign_collection_mappings)
         {
             ManyToManyField many_to_many_field = foreign_collection_mapping.getField().getAnnotation(ManyToManyField.class);
-            ForeignCollectionFieldSingleTarget single_target_field = foreign_collection_mapping.getField().getAnnotation(ForeignCollectionFieldSingleTarget.class);
 
             if (many_to_many_field != null)
             {
@@ -502,7 +501,7 @@ public class JsonPersister
                 throw new SQLiteException(String.format("failed to insert %s with id %s=%s", field.getType().getName(), db_field_name, object_id.toString()));
             }
 
-            sLogger.info(String.format("prepared %s row (id=%s/%d)", tableName, object_id.toString(), inserted_id));
+            sLogger.info("prepared {} row (id={}/{})", tableName, object_id, inserted_id);
 
             return object_id; // don't return inserted_id, because it's always long (while the target type might be int or another type)
         }
@@ -542,7 +541,7 @@ public class JsonPersister
 
                 if (!JsonUtils.copyContentValue(jsonParentObject, jsonKey, values, db_field_name))
                 {
-                    sLogger.warn("attribute type " + jsonKey + " has an unsupported type while parsing " + modelClass.getSimpleName());
+                    sLogger.warn("attribute type {} has an unsupported type while parsing {}", jsonKey, modelClass.getSimpleName());
                 }
             }
         }
@@ -553,7 +552,7 @@ public class JsonPersister
         if (foreignCollectionMapping.getJsonArray() == null)
         {
             // TODO: Delete mapping
-            sLogger.warn(String.format("Mapping %s for type %s was null. Ignored it, but it should be deleted!", foreignCollectionMapping.getField().getName(), foreignCollectionMapping.getField().getType().getName()));
+            sLogger.warn("Mapping {} for type {} was null. Ignored it, but it should be deleted!", foreignCollectionMapping.getField().getName(), foreignCollectionMapping.getField().getType().getName());
             return;
         }
 
@@ -618,7 +617,7 @@ public class JsonPersister
         if (foreignCollectionMapping.getJsonArray() == null)
         {
             // TODO: Delete mapping
-            sLogger.warn(String.format("Mapping %s for type %s was null. Ignored it, but it should be deleted!", foreignCollectionMapping.getField().getName(), foreignCollectionMapping.getField().getType().getName()));
+            sLogger.warn("Mapping {} for type {} was null. Ignored it, but it should be deleted!", foreignCollectionMapping.getField().getName(), foreignCollectionMapping.getField().getType().getName());
             return;
         }
 

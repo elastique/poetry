@@ -142,7 +142,7 @@ public class MappedJsonPersister
             }
             catch (JSONException e)
             {
-                sLogger.error(String.format("JSON data type processing of %s failed: %s", mapper.getType().getName(), e.getMessage()));
+                sLogger.error("JSON data type processing of {} failed: {}", mapper.getType().getName(), e.getMessage());
                 mapper.processFailure(e);
                 return;
             }
@@ -166,14 +166,14 @@ public class MappedJsonPersister
             }
             catch (Exception e)
             {
-                sLogger.error(String.format("JSON data type processing of %s failed: %s", mapper.getType().getClass().getName(), e.getMessage()));
+                sLogger.error("JSON data type processing of {} failed: {}", mapper.getType().getClass().getName(), e.getMessage());
                 mapper.processFailure(e);
                 return;
             }
         }
         else
         {
-            sLogger.error(String.format("Data type %s while processing %s is not supported", resolved_data.getClass().getName(), mapper.getType().getClass().getName()));
+            sLogger.error("Data type {} while processing {} is not supported", resolved_data.getClass().getName(), mapper.getType().getClass().getName());
             mapper.processFailure(new RuntimeException("unsupported type: " + resolved_data.getClass().getName()));
             return;
         }
