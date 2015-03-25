@@ -2,8 +2,13 @@ package nl.elastique.poetry.data.utils;
 
 import com.j256.ormlite.dao.Dao;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class DaoUtils
 {
+    static private final Logger sLogger = LoggerFactory.getLogger(DaoUtils.class);
+
     /**
      * Docs: http://www.sqlite.org/datatype3.html
      */
@@ -16,45 +21,51 @@ public class DaoUtils
         NUMERIC
     }
 
+    private static void executeQuery(Dao<?, ?> dao, String query) throws java.sql.SQLException
+    {
+        sLogger.debug("query: {}", query);
+        dao.executeRawNoArgs(query);
+    }
+
     public static void addColumn(Dao<?, ?> dao, String name, ColumnType columnType) throws java.sql.SQLException
     {
         String query = String.format("ALTER TABLE %s ADD COLUMN %s %s",
-                OrmliteUtils.getTableName(dao.getDataClass()),
-                name,
-                columnType.toString());
+            OrmliteUtils.getTableName(dao.getDataClass()),
+            name,
+            columnType.toString());
 
-        dao.executeRawNoArgs(query);
+        executeQuery(dao, query);
     }
 
     public static void addColumn(Dao<?, ?> dao, String name, ColumnType columnType, String defaultValue) throws java.sql.SQLException
     {
         String query = String.format("ALTER TABLE %s ADD COLUMN %s %s DEFAULT %s",
-                OrmliteUtils.getTableName(dao.getDataClass()),
-                name,
-                columnType.toString(),
-                defaultValue);
+            OrmliteUtils.getTableName(dao.getDataClass()),
+            name,
+            columnType.toString(),
+            defaultValue);
 
-        dao.executeRawNoArgs(query);
+        executeQuery(dao, query);
     }
 
     public static void copyColumn(Dao<?, ?> dao, String fromName, String toName) throws java.sql.SQLException
     {
         String query = String.format("UPDATE %s SET %s = %s",
-                OrmliteUtils.getTableName(dao.getDataClass()),
-                toName,
-                fromName);
+            OrmliteUtils.getTableName(dao.getDataClass()),
+            toName,
+            fromName);
 
-        dao.executeRawNoArgs(query);
+        executeQuery(dao, query);
     }
 
     public static void createIndex(Dao<?, ?> dao, String columnName, String indexName) throws java.sql.SQLException
     {
         String query = String.format("CREATE INDEX %s ON %s (%s)",
-                indexName,
-                OrmliteUtils.getTableName(dao.getDataClass()),
-                columnName);
+            indexName,
+            OrmliteUtils.getTableName(dao.getDataClass()),
+            columnName);
 
-        dao.executeRawNoArgs(query);
+        executeQuery(dao, query);
     }
 
     public static void createIndex(Dao<?, ?> dao, String columnName) throws java.sql.SQLException
