@@ -57,7 +57,7 @@ public class LocalServiceProvider
      */
     public static <S extends Service> void bindService(Context context, final Class<S> classObject, int options, final ServiceCallback<S> callback)
     {
-        final LocalServiceConnector<S> local_service_provider = new LocalServiceConnector<S>(classObject);
+        final LocalServiceConnector<S> local_service_provider = new LocalServiceConnector<>(classObject);
 
         sLogger.debug(String.format("bindingService %s", classObject.getName()));
 
@@ -66,9 +66,9 @@ public class LocalServiceProvider
             @Override
             public void onSuccess(final S service)
             {
-                sLogger.debug(String.format("bindingService onSuccess %s", classObject.getName()));
+                sLogger.debug("bindingService onSuccess {}", classObject.getName());
 
-                ServiceUnbinder unbinder = new ServiceUnbinderImpl<S>(local_service_provider);
+                ServiceUnbinder unbinder = new ServiceUnbinderImpl<>(local_service_provider);
 
                 callback.onService(service, unbinder);
             }
@@ -78,7 +78,7 @@ public class LocalServiceProvider
             {
                 String message = (caught != null && caught.getMessage() != null) ? caught.getMessage() : "[unknown error]";
 
-                sLogger.debug(String.format("bindingService onFailure %s", message));
+                sLogger.error("bindingService onFailure {}", message);
             }
         });
     }
