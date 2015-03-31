@@ -23,6 +23,6 @@ public abstract class LocalIntentService<T extends IntentService> extends Intent
     @Override
     final public IBinder onBind(android.content.Intent intent)
     {
-        return new LocalBinder<T>((T)this);
+        return new LocalBinder<>((T)this);
     }
 }

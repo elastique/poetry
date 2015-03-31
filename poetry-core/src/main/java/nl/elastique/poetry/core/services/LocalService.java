@@ -13,6 +13,6 @@ public abstract class LocalService<T extends Service> extends Service
     @Override
     final public IBinder onBind(android.content.Intent intent)
     {
-        return new LocalBinder<T>((T)this);
+        return new LocalBinder<>((T)this);
     }
 }
