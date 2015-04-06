@@ -3,7 +3,7 @@ package nl.elastique.poetry.data.json;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Looper;
 
-import nl.elastique.poetry.core.lang.Callback;
+import nl.elastique.poetry.core.concurrent.Callback;
 
 import org.json.JSONArray;
 import org.json.JSONException;

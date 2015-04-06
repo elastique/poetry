@@ -1,6 +1,6 @@
-package nl.elastique.poetry.core.lang.callbacks;
+package nl.elastique.poetry.core.concurrent.callbacks;
 
-import nl.elastique.poetry.core.lang.Callback;
+import nl.elastique.poetry.core.concurrent.Callback;
 
 /**
  * A Callback where you can only define onFailure.

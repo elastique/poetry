@@ -2,7 +2,6 @@ package nl.elastique.poetry.data.json;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Looper;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.util.EntityUtils;
@@ -13,11 +12,12 @@ import org.json.JSONTokener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Future;
 
 import nl.elastique.poetry.core.annotations.Nullable;
-import nl.elastique.poetry.core.lang.callbacks.FailureCallback;
+import nl.elastique.poetry.core.concurrent.callbacks.FailureCallback;
 import nl.elastique.poetry.web.http.HttpRequestHandler;
-import nl.elastique.poetry.core.lang.Callback;
+import nl.elastique.poetry.core.concurrent.Callback;
 
 /**
  * This HttpRequestJsonPersister starts an HTTP request, parses the result as JSON and then processes all mappings.

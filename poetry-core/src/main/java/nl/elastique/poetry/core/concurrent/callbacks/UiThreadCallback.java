@@ -1,9 +1,9 @@
-package nl.elastique.poetry.core.lang.callbacks;
+package nl.elastique.poetry.core.concurrent.callbacks;
 
 import android.os.Handler;
 import android.os.Looper;
 
-import nl.elastique.poetry.core.lang.Callback;
+import nl.elastique.poetry.core.concurrent.Callback;
 
 public abstract class UiThreadCallback<Type> implements Callback<Type>
 {

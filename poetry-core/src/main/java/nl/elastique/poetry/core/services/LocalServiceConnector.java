@@ -11,7 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import nl.elastique.poetry.core.annotations.Nullable;
-import nl.elastique.poetry.core.lang.Callback;
+import nl.elastique.poetry.core.concurrent.Callback;
 
 /**
  * Manages the {@link ServiceConnection} of a {@link LocalService} or {@link LocalIntentService}.

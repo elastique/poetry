@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
 
+import com.google.common.util.concurrent.SettableFuture;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpUriRequest;
@@ -12,10 +14,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.concurrent.Future;
 
 import nl.elastique.poetry.core.annotations.Nullable;
 import nl.elastique.poetry.web.http.exceptions.HttpStatusException;
-import nl.elastique.poetry.core.lang.Callback;
+import nl.elastique.poetry.core.concurrent.Callback;
 
 /**
  * Wraps a request so it:
@@ -28,13 +31,13 @@ public class HttpRequestHandler
     public static class Broadcasts
     {
         // Broadcast that is sent when a request begins
-        public static final String ACTION_BEGIN = HttpRequestHandler.class.getName() + ".BEGIN";
+        public static final String ACTION_BEGIN = "nl.elastique.poetry.web.http.HttpRequestHandler.BEGIN";
         // Broadcast that is sent when a request ends
-        public static final String ACTION_END = HttpRequestHandler.class.getName() + ".END";
+        public static final String ACTION_END = "nl.elastique.poetry.web.http.HttpRequestHandler.END";
         // Broadcast that is sent when a request succeeds
-        public static final String ACTION_SUCCESS = HttpRequestHandler.class.getName() + ".SUCCESS";
+        public static final String ACTION_SUCCESS = "nl.elastique.poetry.web.http.HttpRequestHandler.SUCCESS";
         // Broadcast that is sent when a request fails (and a HttpRequest is placed under the "error" intent data extra)
-        public static final String ACTION_FAILURE = HttpRequestHandler.class.getName() + ".FAILURE";
+        public static final String ACTION_FAILURE = "nl.elastique.poetry.web.http.HttpRequestHandler.FAILURE";
     }
 
     private static final Logger sLogger = LoggerFactory.getLogger(HttpRequestHandler.class);
@@ -89,7 +92,7 @@ public class HttpRequestHandler
                 throw new HttpStatusException(response, status_code);
             }
 
-            handleSuccess(context, response, callback);
+            handleSuccess(context, callback, response);
         }
         catch (IOException | HttpStatusException e)
         {
@@ -118,6 +121,30 @@ public class HttpRequestHandler
         }).start();
     }
 
+    public static Future<HttpResponse> execute(final Context context, HttpUriRequest request)
+    {
+        HttpRequestHandler handler = new HttpRequestHandler(request);
+
+        final SettableFuture<HttpResponse> future = SettableFuture.create();
+
+        handler.execute(context, new Callback<HttpResponse>()
+        {
+            @Override
+            public void onSuccess(HttpResponse object)
+            {
+                future.set(object);
+            }
+
+            @Override
+            public void onFailure(Throwable caught)
+            {
+                future.setException(caught);
+            }
+        });
+
+        return future;
+    }
+
     protected void handleFailure(final Context context, @Nullable final Callback<HttpResponse> callback, final Throwable throwable)
     {
         if (sLogger.isDebugEnabled())
@@ -134,7 +161,7 @@ public class HttpRequestHandler
         broadcast(context, Broadcasts.ACTION_FAILURE);
     }
 
-    protected void handleSuccess(final Context context, @Nullable final HttpResponse response, @Nullable final Callback<HttpResponse> listener)
+    protected void handleSuccess(final Context context, @Nullable final Callback<HttpResponse> listener, @Nullable final HttpResponse response)
     {
         if (listener != null)
         {

@@ -19,6 +19,7 @@ apply from: '../maven-push.gradle'
 dependencies {
     compile (
         [group: 'org.slf4j' , name: 'slf4j-api' , version: slf4jVersion],
-        [group: 'com.android.support', name: 'support-v4', version: androidSupportLibraryVersion]
+        [group: 'com.android.support', name: 'support-v4', version: androidSupportLibraryVersion],
+        [group: 'com.google.guava', name: 'guava', version: '18+']
     )
 }
