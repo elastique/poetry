@@ -4,8 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
 
-import com.google.common.util.concurrent.SettableFuture;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpUriRequest;
@@ -119,30 +117,6 @@ public class HttpRequestHandler
                 executeSynchronous(context, listener);
             }
         }).start();
-    }
-
-    public static Future<HttpResponse> execute(final Context context, HttpUriRequest request)
-    {
-        HttpRequestHandler handler = new HttpRequestHandler(request);
-
-        final SettableFuture<HttpResponse> future = SettableFuture.create();
-
-        handler.execute(context, new Callback<HttpResponse>()
-        {
-            @Override
-            public void onSuccess(HttpResponse object)
-            {
-                future.set(object);
-            }
-
-            @Override
-            public void onFailure(Throwable caught)
-            {
-                future.setException(caught);
-            }
-        });
-
-        return future;
     }
 
     protected void handleFailure(final Context context, @Nullable final Callback<HttpResponse> callback, final Throwable throwable)
