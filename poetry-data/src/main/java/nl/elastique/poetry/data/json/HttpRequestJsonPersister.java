@@ -12,11 +12,10 @@ import org.json.JSONTokener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Future;
 
 import nl.elastique.poetry.core.annotations.Nullable;
 import nl.elastique.poetry.core.concurrent.callbacks.FailureCallback;
-import nl.elastique.poetry.web.http.HttpRequestHandler;
+import nl.elastique.poetry.web.http.DeprecateRequestHandler;
 import nl.elastique.poetry.core.concurrent.Callback;
 
 /**
@@ -100,12 +99,12 @@ public class HttpRequestJsonPersister
         return this;
     }
 
-    public void persist(Context context, HttpRequestHandler httpRequestHandler, Callback<JSONObject> jsonFallback)
+    public void persist(Context context, DeprecateRequestHandler httpRequestHandler, Callback<JSONObject> jsonFallback)
     {
         httpRequestHandler.execute(context, new HttpResponseCallback(jsonFallback));
     }
 
-    public void persist(Context context, HttpRequestHandler httpRequestHandler)
+    public void persist(Context context, DeprecateRequestHandler httpRequestHandler)
     {
         httpRequestHandler.execute(context, new HttpResponseCallback());
     }

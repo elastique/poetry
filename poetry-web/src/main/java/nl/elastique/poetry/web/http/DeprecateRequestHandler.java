@@ -12,7 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.concurrent.Future;
 
 import nl.elastique.poetry.core.annotations.Nullable;
 import nl.elastique.poetry.web.http.exceptions.HttpStatusException;
@@ -24,7 +23,7 @@ import nl.elastique.poetry.core.concurrent.Callback;
  *  - executes in a background thread
  *  - provides a single success/failure callback in the foreground thread
  */
-public class HttpRequestHandler
+public class DeprecateRequestHandler
 {
     public static class Broadcasts
     {
@@ -38,18 +37,18 @@ public class HttpRequestHandler
         public static final String ACTION_FAILURE = "nl.elastique.poetry.web.http.HttpRequestHandler.FAILURE";
     }
 
-    private static final Logger sLogger = LoggerFactory.getLogger(HttpRequestHandler.class);
+    private static final Logger sLogger = LoggerFactory.getLogger(DeprecateRequestHandler.class);
 
     private final HttpClient mHttpClient;
 
     private final HttpUriRequest mHttpRequest;
 
-    public HttpRequestHandler(HttpUriRequest httpUriRequest)
+    public DeprecateRequestHandler(HttpUriRequest httpUriRequest)
     {
         this(new DefaultHttpClient(), httpUriRequest);
     }
 
-    public HttpRequestHandler(HttpClient httpClient, HttpUriRequest httpRequest)
+    public DeprecateRequestHandler(HttpClient httpClient, HttpUriRequest httpRequest)
     {
         mHttpClient = httpClient;
         mHttpRequest = httpRequest;
