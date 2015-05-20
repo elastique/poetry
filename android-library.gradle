@@ -5,12 +5,12 @@ ext {
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion hasProperty('androidCompileSdkVersion') ? androidCompileSdkVersion : 20
-    buildToolsVersion hasProperty('androidBuildToolsVersion') ? androidBuildToolsVersion : '20'
+    compileSdkVersion hasProperty('androidCompileSdkVersion') ? androidCompileSdkVersion : 22
+    buildToolsVersion hasProperty('androidBuildToolsVersion') ? androidBuildToolsVersion : '22'
 
     defaultConfig {
         minSdkVersion 10
-        targetSdkVersion hasProperty('androidTargetSdkVersion') ? androidTargetSdkVersion : 20
+        targetSdkVersion hasProperty('androidTargetSdkVersion') ? androidTargetSdkVersion : 22
     }
 
     packagingOptions {
