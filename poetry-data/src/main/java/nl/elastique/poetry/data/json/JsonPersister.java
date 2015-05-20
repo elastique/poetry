@@ -182,7 +182,7 @@ public class JsonPersister
      * @throws JSONException when something went wrong through parsing, this also fails the database transaction and results in no data changes
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    public <IdType> List<IdType> persistArrayApi11(Class<?> modelClass, JSONArray jsonArray) throws JSONException
+    private <IdType> List<IdType> persistArrayApi11(Class<?> modelClass, JSONArray jsonArray) throws JSONException
     {
         try
         {
@@ -228,7 +228,7 @@ public class JsonPersister
      * Recursively persist the array and all its object's children.
      * @throws JSONException when something went wrong through parsing, this also fails the database transaction and results in no data changes
      */
-    public <IdType> List<IdType> persistArrayDeprecate(Class<?> modelClass, JSONArray jsonArray) throws JSONException
+    private <IdType> List<IdType> persistArrayDeprecate(Class<?> modelClass, JSONArray jsonArray) throws JSONException
     {
         try
         {
