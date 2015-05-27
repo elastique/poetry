@@ -1,11 +1,13 @@
 buildscript {
     repositories {
         mavenCentral()
+        jcenter()
     }
 
     dependencies {
         classpath hasProperty('androidGradlePluginClasspath') ? androidGradlePluginClasspath : 'com.android.tools.build:gradle:+'
         classpath 'com.neenbedankt.gradle.plugins:android-apt:1.+'
+        classpath 'com.novoda:bintray-release:0.2.+'
     }
 }
 
@@ -14,7 +16,7 @@ repositories {
 }
 
 apply from: '../android-library.gradle'
-apply from: '../maven-push.gradle'
+apply plugin: 'bintray-release'
 
 ext {
     ormliteVersion = '4.48';
@@ -37,4 +39,14 @@ dependencies {
 
         [group: 'org.slf4j' , name: 'slf4j-api' , version: slf4jVersion]
     )
+}
+
+publish {
+    userOrg = poetryUserOrg
+    repoName = poetryRepoName
+    groupId = poetryGroupId
+    artifactId = 'poetry-data'
+    version = poetryVersion
+    description = 'Elastique Poetry Data'
+    website = poetryWebsite
 }

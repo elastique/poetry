@@ -4,11 +4,11 @@ import nl.elastique.poetry.core.annotations.Nullable;
 import nl.elastique.poetry.core.concurrent.Callback;
 
 /**
- * A class that implements Callback<T> and provides a single onResult method that
+ * A class that implements Callback and provides a single onResult method that
  * is called both on onSuccess and onFailure cases.
  * When onSuccess(value) is called, then onResult(true, value, null) is called.
  * When onFailure(caught) is called, then onResult(false, null, caught) is called.
- * @param <T>
+ * @param <T> the callback data type
  */
 public abstract class UnifiedCallback<T> implements Callback<T>
 {

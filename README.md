@@ -33,24 +33,24 @@ Apache License, Version 2.0
 Usage
 ----
 
-<strong>settings.gradle</strong>
-
-```
-include ':poetry-core'
-include ':poetry-web'
-include ':poetry-data'
-project(':poetry-core').projectDir = new File('ElastiquePoetry/poetry-core')
-project(':poetry-web').projectDir = new File('ElastiquePoetry/poetry-web')
-project(':poetry-data').projectDir = new File('ElastiquePoetry/poetry-data')
-```
-
 <strong>build.gradle</strong>
 
 ```
+repositories {
+    mavenCentral()
+    maven {
+        url "http://dl.bintray.com/elastique/poetry"
+    }
+}
+```
+
+```
 dependencies {
-    compile project(':poetry-core')
-    compile project(':poetry-web')
-    compile project(':poetry-data')
+    compile (
+        [group: 'nl.elastique.poetry', name: 'poetry-core', version: '1.0+'],
+        [group: 'nl.elastique.poetry', name: 'poetry-web', version: '1.0+'],
+        [group: 'nl.elastique.poetry', name: 'poetry-data', version: '1.0+']
+    )
 }
 ```
 
