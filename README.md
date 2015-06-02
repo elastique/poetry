@@ -39,7 +39,7 @@ Usage
 repositories {
     mavenCentral()
     maven {
-        url "http://dl.bintray.com/elastique/poetry"
+        url "https://dl.bintray.com/elastique/poetry"
     }
 }
 ```
