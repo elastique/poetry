@@ -1,27 +1,10 @@
-buildscript {
-    repositories {
-        mavenCentral()
-        jcenter()
-    }
-
-    dependencies {
-        classpath hasProperty('androidGradlePluginClasspath') ? androidGradlePluginClasspath : 'com.android.tools.build:gradle:+'
-        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.+'
-        classpath 'com.novoda:bintray-release:0.2.+'
-    }
-}
-
-repositories {
-    mavenCentral()
-}
-
 apply from: '../android-library.gradle'
 apply plugin: 'bintray-release'
 
 dependencies {
     compile (
         [group: 'org.slf4j' , name: 'slf4j-api' , version: slf4jVersion],
-        [group: 'com.android.support', name: 'support-v4', version: androidSupportLibraryVersion]
+        [group: 'com.android.support', name: 'support-v4', version: '22+']
     )
 }
 

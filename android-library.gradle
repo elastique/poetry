@@ -1,6 +1,6 @@
 ext {
     slf4jVersion = '1.7.+'
-    poetryVersion = '1.0.0'
+    poetryVersion = '1.1.0'
     poetryUserOrg = 'elastique'
     poetryWebsite = 'https://github.com/elastique/poetry'
     poetryGroupId = 'nl.elastique.poetry'
@@ -10,12 +10,12 @@ ext {
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion hasProperty('androidCompileSdkVersion') ? androidCompileSdkVersion : 22
-    buildToolsVersion hasProperty('androidBuildToolsVersion') ? androidBuildToolsVersion : '22'
+    compileSdkVersion 22
+    buildToolsVersion "22.0.1"
 
     defaultConfig {
         minSdkVersion 10
-        targetSdkVersion hasProperty('androidTargetSdkVersion') ? androidTargetSdkVersion : 22
+        targetSdkVersion 22
     }
 
     packagingOptions {
