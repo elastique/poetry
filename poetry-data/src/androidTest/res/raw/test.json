@@ -1,0 +1,46 @@
+{
+    "users" : [
+        {
+            "id" : 1,
+            "name" : "John",
+            "groups" : [
+                {
+                    "id" : 1
+                }
+            ],
+            "tags" : [
+                "tag1",
+                "tag2"
+            ]
+        },
+        {
+            "id" : 2,
+            "name" : "Jane",
+            "groups" : [
+                {
+                    "id" : 2
+                },
+                {
+                    "id" : 3
+                }
+            ],
+            "tags" : [
+                "tag3"
+            ]
+        }
+    ],
+    "groups" : [
+        {
+            "id" : 1,
+            "name" : "Group A"
+        },
+        {
+            "id" : 2,
+            "name" : "Group B"
+        },
+        {
+            "id" : 3,
+            "name" : "Group C"
+        }
+    ]
+}

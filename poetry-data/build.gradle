@@ -20,6 +20,10 @@ dependencies {
         [group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: jacksonVersion],
         [group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: jacksonVersion]
     )
+
+    androidTestCompile(
+        [group: 'org.apache.directory.studio', name: 'org.apache.commons.io', version: '2.4']
+    )
 }
 
 publish {
