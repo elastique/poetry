@@ -47,9 +47,9 @@ repositories {
 ```
 dependencies {
     compile (
-        [group: 'nl.elastique.poetry', name: 'poetry-core', version: '1.0+'],
-        [group: 'nl.elastique.poetry', name: 'poetry-web', version: '1.0+'],
-        [group: 'nl.elastique.poetry', name: 'poetry-data', version: '1.0+']
+        [group: 'nl.elastique.poetry', name: 'poetry-core', version: '1.1+'],
+        [group: 'nl.elastique.poetry', name: 'poetry-web', version: '1.1+'],
+        [group: 'nl.elastique.poetry', name: 'poetry-data', version: '1.1+']
     )
 }
 ```
