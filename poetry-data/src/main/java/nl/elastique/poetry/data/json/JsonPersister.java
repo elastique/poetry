@@ -381,7 +381,7 @@ public class JsonPersister
 
             id_field_name = OrmliteUtils.getFieldName(id_field, id_database_field);
 
-            long inserted_id = mDatabase.insert(table_name, id_field_name, new ContentValues());
+            long inserted_id = mDatabase.insert("'" + table_name + "'", id_field_name, new ContentValues());
 
             if (inserted_id == -1)
             {
@@ -394,7 +394,7 @@ public class JsonPersister
         // Process regular fields
         if (values.size() > 0)
         {
-            mDatabase.update(table_name, values, id_field_name + " = ?", new String[]{object_id.toString()});
+            mDatabase.update("'" + table_name + "'", values, id_field_name + " = ?", new String[]{object_id.toString()});
         }
 
         sLogger.info("imported {} ({}={})", modelClass.getSimpleName(), id_field_name, object_id);
@@ -475,7 +475,7 @@ public class JsonPersister
             throw new RuntimeException(String.format("failed to get a value from JSON with key %s and type %s", jsonKey, field.getType().getName()));
         }
 
-        String sql = String.format("SELECT * FROM %s WHERE %s = ? LIMIT 1", tableName, db_field_name);
+        String sql = String.format("SELECT * FROM '%s' WHERE %s = ? LIMIT 1", tableName, db_field_name);
         String[] selection_args = new String[] { object_id.toString() };
         Cursor cursor = mDatabase.rawQuery(sql, selection_args);
 
@@ -493,8 +493,7 @@ public class JsonPersister
                 throw new JSONException(String.format("failed to process id field %s for table %s and jsonKey %s", field.getName(), tableName, jsonKey));
             }
 
-            long inserted_id = mDatabase.insert(tableName, null, values);
-
+            long inserted_id = mDatabase.insert("'" + tableName + "'", null, values);
 
             if (inserted_id == -1)
             {
@@ -586,7 +585,7 @@ public class JsonPersister
         String target_foreign_field_name = OrmliteUtils.getForeignFieldName(target_foreign_field, target_foreign_field.getAnnotation(DatabaseField.class));
 
         String delete_select_clause = target_foreign_field_name + " = " + QueryUtils.parseAttribute(parentId);
-        mDatabase.delete(target_table_name, delete_select_clause, new String[]{});
+        mDatabase.delete("'" + target_table_name + "'", delete_select_clause, new String[]{});
 
         String target_target_field_name = OrmliteUtils.getForeignFieldName(target_target_field, target_target_field.getAnnotation(DatabaseField.class));
 
@@ -605,7 +604,7 @@ public class JsonPersister
                 throw new RuntimeException("target id copy failed");
             }
 
-            if (mDatabase.insert(target_table_name, null, values) == -1)
+            if (mDatabase.insert("'" + target_table_name + "'", null, values) == -1)
             {
                 throw new RuntimeException("failed to insert item in " + target_table_name);
             }
@@ -668,13 +667,13 @@ public class JsonPersister
         String target_id_field_name = OrmliteUtils.getFieldName(target_id_field);
 
         String update_select_clause = target_id_field_name + " " + in_clause;
-        mDatabase.update(target_table_name, values, update_select_clause, target_id_args);
+        mDatabase.update("'" + target_table_name + "'", values, update_select_clause, target_id_args);
 
         if (!Option.isEnabled(mOptions, Option.DISABLE_FOREIGN_COLLECTION_CLEANUP))
         {
             // remove all objects that are not referenced to the parent anymore
             String delete_select_clause = target_id_field_name + " NOT " + in_clause + " AND " + target_foreign_field_name + " = " + QueryUtils.parseAttribute(parentId);
-            mDatabase.delete(target_table_name, delete_select_clause, target_id_args);
+            mDatabase.delete("'" + target_table_name + "'", delete_select_clause, target_id_args);
         }
     }
 }
