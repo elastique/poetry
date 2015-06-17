@@ -1,29 +1,51 @@
 Poetry
 ======
 
-Poetry is Elastique's open source toolset to make Android development easier and more productive.
+Poetry is a persistence library that allows you to persist a JSON object tree (through [Jackson]) directly into an SQLite database (through [OrmLite]).
+Poetry enables you to write less code and persist data much faster.
 
-Poetry is divided into 3 parts:
+Consider this JSON:
+```
+{
+	"id" : 1,
+	"name" : "John Doe"
+}
+```
+And this Java model:
+```
+@JsonIgnoreProperties(ignoreUnknown = true)
+@DatabaseTable
+class User
+{
+	@DatabaseField(id = true)
+    public int id;
 
-* poetry-core
-* poetry-web
-* poetry-data
-
-This library and its documentation is still in development. Please come back later for more information.
-
-Poetry Core
+	@DatabaseField
+    public String name;
+}
+```
+They can be stored into the database like this:
+```
+JSONObject json_object = ...; // processed JSON tree
+DatabaseHelper helper = ...; // OrmLite databasehelper;
+JsonPersister persister = new JsonPersister(helper.getWritableDatabase());
+persister.persistObject(User.class, json_object);
+```
+Features
 ----
-Basic language features, algorithms and interfaces.
+* Annotation-based model configuration
+* Support for relationships:
+	* One-to-one
+	* Many-to-one
+	* One-to-many
+	* Many-to-many
+* Arrays of base types (e.g. JSON String array persisted to separate table)
 
-Poetry Web
+Library components
 ----
-Web development features including a threaded HttpRequestHandler that combines HttpClient and HttpRequest, executes it in the background and provides success/failure callbacks in the background. It also broadcasts its internal events.
-
-Poetry Data
-----
-Provides ORM functionality by combining [OrmLite] and [JSON] combined with [Jackson]:
-
-JSON input can be directly injected into an SQLite database.
+* <strong>poetry-core</strong>: core Java and Android utilities
+* <strong>poetry-data</strong>: persistence and json processing
+* <strong>poetry-web</strong>: http request processing utilities
 
 License
 ----
