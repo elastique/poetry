@@ -76,6 +76,12 @@ dependencies {
 }
 ```
 
+Demo
+----
+
+A [Demo] application is available on GitHub
+
 [OrmLite]:http://ormlite.com
 [JSON]:http://json.org/java/
 [Jackson]:https://github.com/FasterXML/jackson
+[Demo]:https://github.com/elastique/poetry-demo
