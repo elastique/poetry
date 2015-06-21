@@ -5,14 +5,14 @@ Poetry is a persistence library that allows you to persist a JSON object tree (t
 Poetry enables you to write less code and persist data much faster.
 
 Consider this JSON:
-```
+```json
 {
 	"id" : 1,
 	"name" : "John Doe"
 }
 ```
 And this Java model:
-```
+```java
 @JsonIgnoreProperties(ignoreUnknown = true)
 @DatabaseTable
 class User
@@ -25,7 +25,7 @@ class User
 }
 ```
 They can be stored into the database like this:
-```
+```java
 JSONObject json_object = ...; // processed JSON tree
 DatabaseHelper helper = ...; // OrmLite databasehelper;
 JsonPersister persister = new JsonPersister(helper.getWritableDatabase());
