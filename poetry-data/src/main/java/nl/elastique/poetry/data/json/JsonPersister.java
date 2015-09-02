@@ -518,14 +518,42 @@ public class JsonPersister
             }
             else
             {
-                JSONObject foreign_object = jsonParentObject.getJSONObject(jsonKey);
+                JSONObject foreign_object = jsonParentObject.optJSONObject(jsonKey);
 
-                Object foreign_object_id = persistObjectInternal(field.getType(), foreign_object);
+				if (foreign_object != null)
+				{
+					//If the JSON includes the forein object, try to persist it
 
-                if (!JsonUtils.copyValue(foreign_object_id, db_field_name, values))
-                {
-                    throw new RuntimeException("failed to copy values for key " + jsonKey + " in " + modelClass.getName() + ": key type " + foreign_object_id.getClass() + " is not supported");
-                }
+					Object foreign_object_id = persistObjectInternal(field.getType(), foreign_object);
+
+					if (!JsonUtils.copyValue(foreign_object_id, db_field_name, values))
+					{
+						throw new RuntimeException("failed to copy values for key " + jsonKey + " in " + modelClass.getName() + ": key type " + foreign_object_id.getClass() + " is not supported");
+					}
+				}
+				else
+				{
+					//The JSON does not include the foreign object, see if it is a valid key for the foreign object
+
+					Field foreign_object_id_field = OrmliteUtils.findIdField(field.getType());
+
+					if (foreign_object_id_field == null)
+					{
+						throw new RuntimeException("failed to find id field for foreign object " + field.getType().getName() + " in " + modelClass.getName());
+					}
+
+					Object foreign_object_id = JsonUtils.getValue(jsonParentObject, jsonKey, foreign_object_id_field.getType());
+
+					if (foreign_object_id == null)
+					{
+						throw new RuntimeException("incompatible id type for foreign object " + field.getType().getName() + " in " + modelClass.getName() + " (expected " + foreign_object_id_field.getType().getName() + ")");
+					}
+
+					if (!JsonUtils.copyValue(foreign_object_id, db_field_name, values))
+					{
+						throw new RuntimeException("failed to copy values for key " + jsonKey + " in " + modelClass.getName() + ": key type " + foreign_object_id.getClass() + " is not supported");
+					}
+				}
             }
         }
         else // non-foreign

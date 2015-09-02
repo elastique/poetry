@@ -13,12 +13,7 @@ dependencies {
 
         // ORM
         [group: 'com.j256.ormlite', name: 'ormlite-core', version: ormliteVersion],
-        [group: 'com.j256.ormlite', name: 'ormlite-android', version: ormliteVersion],
-
-        // JSON
-        [group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: jacksonVersion],
-        [group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: jacksonVersion],
-        [group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: jacksonVersion]
+        [group: 'com.j256.ormlite', name: 'ormlite-android', version: ormliteVersion]
     )
 
     androidTestCompile(
