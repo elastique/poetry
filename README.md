@@ -1,7 +1,7 @@
 Poetry
 ======
 
-Poetry is a persistence library that allows you to persist a JSON object tree (through [Jackson]) directly into an SQLite database (through [OrmLite]).
+Poetry is a persistence library that allows you to persist a JSON object tree directly into an SQLite database (through [OrmLite]).
 Poetry enables you to write less code and persist data much faster.
 
 Consider this JSON:
@@ -45,7 +45,6 @@ Library components
 ----
 * <strong>poetry-core</strong>: core Java and Android utilities
 * <strong>poetry-data</strong>: persistence and json processing
-* <strong>poetry-web</strong>: http request processing utilities
 
 License
 ----
@@ -69,9 +68,8 @@ repositories {
 ```
 dependencies {
     compile (
-        [group: 'nl.elastique.poetry', name: 'poetry-core', version: '1.1+'],
-        [group: 'nl.elastique.poetry', name: 'poetry-web', version: '1.1+'],
-        [group: 'nl.elastique.poetry', name: 'poetry-data', version: '1.1+']
+        [group: 'nl.elastique.poetry', name: 'poetry-core', version: '2.0+'],
+        [group: 'nl.elastique.poetry', name: 'poetry-data', version: '2.0+']
     )
 }
 ```
@@ -83,5 +81,4 @@ A [Demo] application is available on GitHub
 
 [OrmLite]:http://ormlite.com
 [JSON]:http://json.org/java/
-[Jackson]:https://github.com/FasterXML/jackson
 [Demo]:https://github.com/elastique/poetry-demo
