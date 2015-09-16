@@ -1,3 +1,2 @@
 include ':poetry-core'
 include ':poetry-data'
-include ':poetry-web'

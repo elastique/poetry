@@ -9,7 +9,6 @@ ext {
 dependencies {
     compile (
         project(':poetry-core'),
-        project(':poetry-web'),
 
         // ORM
         [group: 'com.j256.ormlite', name: 'ormlite-core', version: ormliteVersion],

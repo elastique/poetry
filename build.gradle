@@ -5,9 +5,10 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:1.2.+'
-        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.+'
-        classpath 'com.novoda:bintray-release:0.2.+'
+        classpath 'com.android.tools.build:gradle:1.3.0'
+        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.7'
+        classpath 'com.novoda:bintray-release:0.3.4'
+        // bintray usage: ./gradlew clean build bintrayUpload -PbintrayUser=??? -PbintrayKey=??? -PdryRun=false
     }
 }
 
