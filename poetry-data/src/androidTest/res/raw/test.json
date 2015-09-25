@@ -42,5 +42,9 @@
             "id" : 3,
             "name" : "Group C"
         }
-    ]
+    ],
+    "duck" : {
+        "id" : 1,
+        "name" : "Quack"
+    }
 }

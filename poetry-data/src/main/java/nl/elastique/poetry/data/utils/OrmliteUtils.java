@@ -8,6 +8,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
+import nl.elastique.poetry.data.json.annotations.MapFrom;
+
 /**
  * A set of utilities for OrmLite.
  *
@@ -78,10 +80,19 @@ public class OrmliteUtils
     {
         for (Field field : modelClass.getDeclaredFields())
         {
+			// Direct match?
             if (field.getName().equals(name))
             {
                 return field;
             }
+
+			// MapFrom-annotated match?
+			MapFrom map_from = field.getAnnotation(MapFrom.class);
+
+			if (map_from != null && name.equals(map_from.value()))
+			{
+				return field;
+			}
         }
 
         if (modelClass.getSuperclass() != null)
