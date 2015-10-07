@@ -13,15 +13,16 @@ Consider this JSON:
 ```
 And this Java model:
 ```java
-@JsonIgnoreProperties(ignoreUnknown = true)
 @DatabaseTable
 class User
 {
-	@DatabaseField(id = true)
-    public int id;
+	@DatabaseField(id = true, columnName = "id")
+	@MapFrom("id")
+    private int mName;
 
-	@DatabaseField
-    public String name;
+	@DatabaseField(columnName = "name")
+	@MapFrom("name")
+    private String name;
 }
 ```
 They can be stored into the database like this:
@@ -68,8 +69,8 @@ repositories {
 ```
 dependencies {
     compile (
-        [group: 'nl.elastique.poetry', name: 'poetry-core', version: '2.0+'],
-        [group: 'nl.elastique.poetry', name: 'poetry-data', version: '2.0+']
+        [group: 'nl.elastique.poetry', name: 'poetry-core', version: '2.1.0'],
+        [group: 'nl.elastique.poetry', name: 'poetry-data', version: '2.1.0']
     )
 }
 ```
