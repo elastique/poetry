@@ -69,8 +69,8 @@ repositories {
 ```
 dependencies {
     compile (
-        [group: 'nl.elastique.poetry', name: 'poetry-core', version: '2.1.0'],
-        [group: 'nl.elastique.poetry', name: 'poetry-data', version: '2.1.0']
+        [group: 'nl.elastique.poetry', name: 'poetry-core', version: '2.2.0'],
+        [group: 'nl.elastique.poetry', name: 'poetry-data', version: '2.2.0']
     )
 }
 ```
