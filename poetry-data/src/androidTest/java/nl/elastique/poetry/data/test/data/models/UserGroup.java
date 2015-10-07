@@ -3,6 +3,8 @@ package nl.elastique.poetry.data.test.data.models;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import nl.elastique.poetry.data.json.annotations.MapFrom;
+
 /**
  * Maps a User onto a Group
  */
@@ -10,11 +12,14 @@ import com.j256.ormlite.table.DatabaseTable;
 public class UserGroup
 {
     @DatabaseField(generatedId = true)
-    public int id;
+	@MapFrom("id")
+    private int mId;
 
-    @DatabaseField(foreign = true)
-    public User user;
+    @DatabaseField(foreign = true, columnName = "user_id")
+	@MapFrom("user")
+	private User mUser;
 
-    @DatabaseField(foreign = true)
-    public Group group;
+    @DatabaseField(foreign = true, columnName = "group_id")
+	@MapFrom("group")
+    private Group mGroup;
 }

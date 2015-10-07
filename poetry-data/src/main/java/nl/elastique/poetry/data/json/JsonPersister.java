@@ -508,69 +508,57 @@ public class JsonPersister
 
     private void processDatabaseField(DatabaseField databaseField, Field field, JSONObject jsonParentObject, String jsonKey, Class<?> modelClass, ContentValues values) throws JSONException
     {
-        if (OrmliteUtils.isForeign(databaseField))
+		String db_field_name = OrmliteUtils.getFieldName(field, databaseField);
+
+		if (jsonParentObject.isNull(jsonKey))
+		{
+			values.putNull(db_field_name);
+		}
+		else if (OrmliteUtils.isForeign(databaseField))
         {
-            String db_field_name = OrmliteUtils.getForeignFieldName(field, databaseField);
+			JSONObject foreign_object = jsonParentObject.optJSONObject(jsonKey);
 
-            if (jsonParentObject.isNull(jsonKey))
-            {
-                values.putNull(db_field_name);
-            }
-            else
-            {
-                JSONObject foreign_object = jsonParentObject.optJSONObject(jsonKey);
+			if (foreign_object != null)
+			{
+				//If the JSON includes the forein object, try to persist it
 
-				if (foreign_object != null)
+				Object foreign_object_id = persistObjectInternal(field.getType(), foreign_object);
+
+				if (!JsonUtils.copyValue(foreign_object_id, db_field_name, values))
 				{
-					//If the JSON includes the forein object, try to persist it
-
-					Object foreign_object_id = persistObjectInternal(field.getType(), foreign_object);
-
-					if (!JsonUtils.copyValue(foreign_object_id, db_field_name, values))
-					{
-						throw new RuntimeException("failed to copy values for key " + jsonKey + " in " + modelClass.getName() + ": key type " + foreign_object_id.getClass() + " is not supported");
-					}
+					throw new RuntimeException("failed to copy values for key " + jsonKey + " in " + modelClass.getName() + ": key type " + foreign_object_id.getClass() + " is not supported");
 				}
-				else
+			}
+			else
+			{
+				//The JSON does not include the foreign object, see if it is a valid key for the foreign object
+
+				Field foreign_object_id_field = OrmliteUtils.findIdField(field.getType());
+
+				if (foreign_object_id_field == null)
 				{
-					//The JSON does not include the foreign object, see if it is a valid key for the foreign object
-
-					Field foreign_object_id_field = OrmliteUtils.findIdField(field.getType());
-
-					if (foreign_object_id_field == null)
-					{
-						throw new RuntimeException("failed to find id field for foreign object " + field.getType().getName() + " in " + modelClass.getName());
-					}
-
-					Object foreign_object_id = JsonUtils.getValue(jsonParentObject, jsonKey, foreign_object_id_field.getType());
-
-					if (foreign_object_id == null)
-					{
-						throw new RuntimeException("incompatible id type for foreign object " + field.getType().getName() + " in " + modelClass.getName() + " (expected " + foreign_object_id_field.getType().getName() + ")");
-					}
-
-					if (!JsonUtils.copyValue(foreign_object_id, db_field_name, values))
-					{
-						throw new RuntimeException("failed to copy values for key " + jsonKey + " in " + modelClass.getName() + ": key type " + foreign_object_id.getClass() + " is not supported");
-					}
+					throw new RuntimeException("failed to find id field for foreign object " + field.getType().getName() + " in " + modelClass.getName());
 				}
-            }
+
+				Object foreign_object_id = JsonUtils.getValue(jsonParentObject, jsonKey, foreign_object_id_field.getType());
+
+				if (foreign_object_id == null)
+				{
+					throw new RuntimeException("incompatible id type for foreign object " + field.getType().getName() + " in " + modelClass.getName() + " (expected " + foreign_object_id_field.getType().getName() + ")");
+				}
+
+				if (!JsonUtils.copyValue(foreign_object_id, db_field_name, values))
+				{
+					throw new RuntimeException("failed to copy values for key " + jsonKey + " in " + modelClass.getName() + ": key type " + foreign_object_id.getClass() + " is not supported");
+				}
+			}
         }
         else // non-foreign
         {
-            if (jsonParentObject.isNull(jsonKey))
-            {
-                values.putNull(jsonKey);
-            }
-            else
-            {
-                String db_field_name = OrmliteUtils.getFieldName(field, databaseField);
-
-                if (!JsonUtils.copyContentValue(jsonParentObject, jsonKey, values, db_field_name))
-                {
-                    sLogger.warn("attribute type {} has an unsupported type while parsing {}", jsonKey, modelClass.getSimpleName());
-                }
-            }
+			if (!JsonUtils.copyContentValue(jsonParentObject, jsonKey, values, db_field_name))
+			{
+				sLogger.warn("attribute type {} has an unsupported type while parsing {}", jsonKey, modelClass.getSimpleName());
+			}
         }
     }
 
@@ -610,12 +598,12 @@ public class JsonPersister
         List<Object> target_target_ids = persistArrayOfObjects(target_target_field.getType(), foreignCollectionMapping.getJsonArray());
 
         String target_table_name = OrmliteUtils.getTableName(target_class);
-        String target_foreign_field_name = OrmliteUtils.getForeignFieldName(target_foreign_field, target_foreign_field.getAnnotation(DatabaseField.class));
+        String target_foreign_field_name = OrmliteUtils.getFieldName(target_foreign_field, target_foreign_field.getAnnotation(DatabaseField.class));
 
         String delete_select_clause = target_foreign_field_name + " = " + QueryUtils.parseAttribute(parentId);
         mDatabase.delete("'" + target_table_name + "'", delete_select_clause, new String[]{});
 
-        String target_target_field_name = OrmliteUtils.getForeignFieldName(target_target_field, target_target_field.getAnnotation(DatabaseField.class));
+        String target_target_field_name = OrmliteUtils.getFieldName(target_target_field, target_target_field.getAnnotation(DatabaseField.class));
 
         // Insert new references
         for (int i = 0; i < target_target_ids.size(); ++i)
@@ -678,7 +666,7 @@ public class JsonPersister
             target_ids = persistArrayOfBaseTypes(target_class, foreignCollectionMapping.getJsonArray(), single_target_field);
         }
 
-        String target_foreign_field_name = OrmliteUtils.getForeignFieldName(target_foreign_field, target_foreign_field.getAnnotation(DatabaseField.class));
+        String target_foreign_field_name = OrmliteUtils.getFieldName(target_foreign_field, target_foreign_field.getAnnotation(DatabaseField.class));
 
         ContentValues values = new ContentValues(1);
 

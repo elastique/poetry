@@ -7,15 +7,18 @@ import com.j256.ormlite.table.DatabaseTable;
 
 import nl.elastique.poetry.data.json.annotations.ForeignCollectionFieldSingleTarget;
 import nl.elastique.poetry.data.json.annotations.ManyToManyField;
+import nl.elastique.poetry.data.json.annotations.MapFrom;
 
 @DatabaseTable
 public class User
 {
-    @DatabaseField(id = true)
-    private int id;
+    @DatabaseField(id = true, columnName = "id")
+	@MapFrom("id")
+    private int mId;
 
-    @DatabaseField
-    private String name;
+    @DatabaseField(columnName = "name")
+	@MapFrom("name")
+    private String mName;
 
     /**
      * Many-to-many relationships.
@@ -25,7 +28,8 @@ public class User
      */
     @ForeignCollectionField(eager = true)
     @ManyToManyField(targetType = Group.class)
-    private ForeignCollection<UserGroup> groups;
+	@MapFrom("groups")
+    private ForeignCollection<UserGroup> mGroups;
 
     /**
      * One-to-many relationships on simple types (arrays of strings/integers/etc.)
@@ -36,5 +40,16 @@ public class User
      */
     @ForeignCollectionField
     @ForeignCollectionFieldSingleTarget(targetField = "value")
-    public ForeignCollection<UserTag> tags;
+	@MapFrom("tags")
+    private ForeignCollection<UserTag> mTags;
+
+	public int getId()
+	{
+		return mId;
+	}
+
+	public String getName()
+	{
+		return mName;
+	}
 }

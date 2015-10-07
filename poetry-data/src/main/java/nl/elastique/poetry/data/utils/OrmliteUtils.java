@@ -51,19 +51,18 @@ public class OrmliteUtils
 
     public static String getFieldName(Field field, DatabaseField databaseField)
     {
-        return !databaseField.columnName().isEmpty() ? databaseField.columnName() : field.getName();
-    }
-
-    public static String getForeignFieldName(Field field, DatabaseField databaseField)
-    {
-        if (databaseField.foreignColumnName().isEmpty())
-        {
-            return field.getName() + sForeignIdFieldSuffix;
-        }
-        else
-        {
-            return field.getName() + "_" + databaseField.foreignColumnName();
-        }
+		if (!databaseField.columnName().isEmpty())
+		{
+			return databaseField.columnName();
+		}
+		else if (OrmliteUtils.isForeign(databaseField))
+		{
+			return field.getName() + sForeignIdFieldSuffix;
+		}
+		else
+		{
+			return field.getName();
+		}
     }
 
     public static boolean isForeign(DatabaseField databaseField)
