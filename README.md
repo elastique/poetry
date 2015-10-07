@@ -18,11 +18,11 @@ class User
 {
 	@DatabaseField(id = true, columnName = "id")
 	@MapFrom("id")
-    private int mName;
+    private int mId;
 
 	@DatabaseField(columnName = "name")
 	@MapFrom("name")
-    private String name;
+    private String mName;
 }
 ```
 They can be stored into the database like this:
