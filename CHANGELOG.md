@@ -1,9 +1,14 @@
-## 2.1.0 (2015-10-07)
+## 2.2.0 (2015-10-07)
 
 Bugfixes:
  - fix for foreign relationships
  - updated tests
 
+## 2.1.0 (2015-09-25)
+
+Features:
+ - added MapFrom annotation
+ 
 ## 2.0.0 (2015-09-15)
 
 Deprecations:
