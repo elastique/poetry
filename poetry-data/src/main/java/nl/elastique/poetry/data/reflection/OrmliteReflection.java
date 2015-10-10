@@ -1,4 +1,4 @@
-package nl.elastique.poetry.data.utils;
+package nl.elastique.poetry.data.reflection;
 
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
@@ -15,7 +15,7 @@ import nl.elastique.poetry.data.json.annotations.MapFrom;
  *
  * @author Ken Van Hoeylandt
  */
-public class OrmliteUtils
+public class OrmliteReflection
 {
     // Reference: http://sourceforge.net/p/ormlite/code/HEAD/tree/ormlite-core/trunk/src/main/java/com/j256/ormlite/field/FieldType.java
     private static final String sForeignIdFieldSuffix = "_id";
@@ -55,7 +55,7 @@ public class OrmliteUtils
 		{
 			return databaseField.columnName();
 		}
-		else if (OrmliteUtils.isForeign(databaseField))
+		else if (OrmliteReflection.isForeign(databaseField))
 		{
 			return field.getName() + sForeignIdFieldSuffix;
 		}
