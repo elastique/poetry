@@ -1,5 +1,6 @@
 package nl.elastique.poetry.data.json;
 
+import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -55,7 +56,7 @@ public class JsonPersister
          * Check if an option is enabled
          * @param optionsSet the compound of option values (combined with logical OR operator)
          * @param optionCheck one or more options to check (combined with logical OR operator)
-         * @return true when all the ∂ options from optionCheck are contained in optionsSet
+         * @return true when all the options from optionCheck are contained in optionsSet
          */
         public static boolean isEnabled(int optionsSet, int optionCheck)
         {
@@ -129,6 +130,41 @@ public class JsonPersister
             sLogger.warn("please call persistObject() on a background thread");
         }
 
+        if (Build.VERSION.SDK_INT >= 11)
+        {
+            return persistObjectApi11(modelClass, jsonObject);
+        }
+        else
+        {
+            return persistObjectApiDeprecate(modelClass, jsonObject);
+        }
+    }
+
+    /**
+     * Recursively persist the array and all its object's children.
+     * @throws JSONException when something went wrong through parsing, this also fails the database transaction and results in no data changes
+     */
+    public <IdType> List<IdType> persistArray(Class<?> modelClass, JSONArray jsonArray) throws JSONException
+    {
+        if (Looper.myLooper() == Looper.getMainLooper())
+        {
+            sLogger.warn("please call persistArray() on a background thread");
+        }
+
+        // TODO: make Transaction object (that handles all API levels), so we don't need a separate code path
+        if (Build.VERSION.SDK_INT >= 11)
+        {
+            return persistArrayApi11(modelClass, jsonArray);
+        }
+        else
+        {
+            return persistArrayDeprecate(modelClass, jsonArray);
+        }
+    }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    private <IdType> IdType persistObjectApi11(Class<?> modelClass, JSONObject jsonObject) throws JSONException
+    {
         try
         {
             enableWriteAheadLogging();
@@ -151,13 +187,9 @@ public class JsonPersister
      * Recursively persist the array and all its object's children.
      * @throws JSONException when something went wrong through parsing, this also fails the database transaction and results in no data changes
      */
-    public <IdType> List<IdType> persistArray(Class<?> modelClass, JSONArray jsonArray) throws JSONException
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    private <IdType> List<IdType> persistArrayApi11(Class<?> modelClass, JSONArray jsonArray) throws JSONException
     {
-        if (Looper.myLooper() == Looper.getMainLooper())
-        {
-            sLogger.warn("please call persistArray() on a background thread");
-        }
-
         try
         {
             enableWriteAheadLogging();
@@ -180,6 +212,51 @@ public class JsonPersister
         }
     }
 
+    private <IdType> IdType persistObjectApiDeprecate(Class<?> modelClass, JSONObject jsonObject) throws JSONException
+    {
+        try
+        {
+            mDatabase.beginTransaction();
+
+            IdType id = persistObjectInternal(modelClass, jsonObject);
+
+            mDatabase.setTransactionSuccessful();
+
+            return id;
+        }
+        finally
+        {
+            endTransaction();
+        }
+    }
+
+    /**
+     * Recursively persist the array and all its object's children.
+     * @throws JSONException when something went wrong through parsing, this also fails the database transaction and results in no data changes
+     */
+    private <IdType> List<IdType> persistArrayDeprecate(Class<?> modelClass, JSONArray jsonArray) throws JSONException
+    {
+        try
+        {
+            mDatabase.beginTransaction();
+
+            List<IdType> id_list = persistArrayOfObjects(modelClass, jsonArray);
+
+            mDatabase.setTransactionSuccessful();
+
+            return id_list;
+        }
+        catch (JSONException e)
+        {
+            throw e;
+        }
+        finally
+        {
+            endTransaction();
+        }
+    }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     private void enableWriteAheadLogging()
     {
         try
