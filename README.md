@@ -42,6 +42,11 @@ Features
 	* Many-to-many
 * Arrays of base types (e.g. JSON String array persisted to separate table)
 
+Requirements
+----
+
+* Android 4.1 or higher
+
 Library components
 ----
 * <strong>poetry-core</strong>: core Java and Android utilities

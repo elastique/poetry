@@ -1,3 +1,11 @@
+## 2.3.0 (2015-10-10)
+
+Features:
+ - performance improvements for big datasets with JsonPersister
+
+Deprecations:
+ - pre-Android 4.1 support is dropped 
+
 ## 2.2.0 (2015-10-07)
 
 Bugfixes:
