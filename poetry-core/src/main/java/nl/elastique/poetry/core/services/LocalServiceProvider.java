@@ -78,7 +78,7 @@ public class LocalServiceProvider
             {
                 String message = (caught != null && caught.getMessage() != null) ? caught.getMessage() : "[unknown error]";
 
-                sLogger.debug("bindingService onFailure {}", message);
+                sLogger.error("bindingService onFailure {}", message);
             }
         });
     }
