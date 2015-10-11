@@ -1,3 +1,9 @@
+## 2.4.0 (tbd)
+
+Features:
+- refactored LocalServiceProvider.bindService method order so it is more consistent
+- improved tests
+
 ## 2.3.0 (2015-10-10)
 
 Features:
