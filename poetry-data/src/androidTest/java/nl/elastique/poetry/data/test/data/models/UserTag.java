@@ -3,8 +3,6 @@ package nl.elastique.poetry.data.test.data.models;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
-import nl.elastique.poetry.data.json.annotations.MapFrom;
-
 @DatabaseTable
 public class UserTag
 {
@@ -16,4 +14,9 @@ public class UserTag
 
     @DatabaseField(columnName = "value")
 	private String mValue;
+
+    public String getTag()
+    {
+        return mValue;
+    }
 }

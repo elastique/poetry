@@ -38,10 +38,18 @@ public class JsonTestCase extends AndroidTestCase
 		Dao<Group, Integer> group_dao = helper.getDao(Group.class);
 
 		List<User> users = user_dao.queryForAll();
-        assertEquals(users.size(), 2);
+        assertEquals(2, users.size());
 
         List<Group> groups = group_dao.queryForAll();
-        assertEquals(groups.size(), 3);
+        assertEquals(3, groups.size());
+
+        User user = user_dao.queryForId(1);
+        assertNotNull(user);;
+        assertEquals("John", user.getName());
+
+        Group group = group_dao.queryForId(2);
+        assertNotNull(group);
+        assertEquals("Group B", group.getName());
 
         DatabaseHelper.releaseHelper();
     }

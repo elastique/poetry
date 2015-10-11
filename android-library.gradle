@@ -1,6 +1,6 @@
 ext {
     slf4jVersion = '1.7.+'
-    poetryVersion = '2.3.0'
+    poetryVersion = '2.4.0'
     poetryUserOrg = 'elastique'
     poetryWebsite = 'https://github.com/elastique/poetry'
     poetryGroupId = 'nl.elastique.poetry'

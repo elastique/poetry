@@ -8,18 +8,32 @@ import org.slf4j.LoggerFactory;
 
 import nl.elastique.poetry.core.concurrent.Callback;
 
+/**
+ * A utility class that provides easy binding/access to local (in-process) services.
+ */
 public class LocalServiceProvider
 {
     static private final Logger sLogger = LoggerFactory.getLogger(LocalServiceConnector.class);
 
+    /**
+     * The callback for services that become available
+     * @param <S> the service type
+     */
     public interface ServiceCallback<S extends Service>
     {
-        public void onService(S service, ServiceUnbinder serviceUnbinder);
+        /**
+         * @param service the service that is available
+         * @param serviceUnbinder the interface to release/unbind the service
+         */
+        void onService(S service, ServiceUnbinder serviceUnbinder);
     }
 
-    public static interface ServiceUnbinder
+    /**
+     * An interface to unbind a service.
+     */
+    public interface ServiceUnbinder
     {
-        public void unbind();
+        void unbind();
     }
 
     private static class ServiceUnbinderImpl<S extends Service> implements ServiceUnbinder
@@ -43,10 +57,15 @@ public class LocalServiceProvider
      * The owner of {@link ServiceCallback} is responsible of calling the {@link ServiceUnbinder}.
      *
      * It is not guaranteed on which thread the {@link ServiceCallback} is accessed.
+     *
+     * @param <S> the Service type
+     * @param context the Android context
+     * @param serviceClass the service type to bind
+     * @param callback the ServiceCallback that provides the service and interface to release it
      */
-    public static <S extends Service> void bindService(Context context, Class<S> classObject, final ServiceCallback<S> callback)
+    public static <S extends Service> void bindService(Context context, Class<S> serviceClass, final ServiceCallback<S> callback)
     {
-        bindService(context, classObject, Context.BIND_AUTO_CREATE, callback);
+        bindService(context, serviceClass, callback, Context.BIND_AUTO_CREATE);
     }
 
     /**
@@ -54,19 +73,25 @@ public class LocalServiceProvider
      * The owner of {@link ServiceCallback} is responsible of calling the {@link ServiceUnbinder}.
      *
      * It is not guaranteed on which thread the {@link ServiceCallback} is accessed.
+     *
+     * @param <S> the Service type
+     * @param context the Android context
+     * @param serviceClass the service type to bind
+     * @param options the options to pass on to Context.bindService()
+     * @param callback the ServiceCallback that provides the service and interface to release it
      */
-    public static <S extends Service> void bindService(Context context, final Class<S> classObject, int options, final ServiceCallback<S> callback)
+    public static <S extends Service> void bindService(Context context, final Class<S> serviceClass, final ServiceCallback<S> callback, int options)
     {
-        final LocalServiceConnector<S> local_service_provider = new LocalServiceConnector<>(classObject);
+        final LocalServiceConnector<S> local_service_provider = new LocalServiceConnector<>(serviceClass);
 
-        sLogger.debug("bindingService {}", classObject.getName());
+        sLogger.debug("bindService {}", serviceClass.getName());
 
         local_service_provider.bindService(context, options, new Callback<S>()
         {
             @Override
             public void onSuccess(final S service)
             {
-                sLogger.debug("bindingService onSuccess {}", classObject.getName());
+                sLogger.debug("bindService onSuccess {}", serviceClass.getName());
 
                 ServiceUnbinder unbinder = new ServiceUnbinderImpl<>(local_service_provider);
 
@@ -78,7 +103,7 @@ public class LocalServiceProvider
             {
                 String message = (caught != null && caught.getMessage() != null) ? caught.getMessage() : "[unknown error]";
 
-                sLogger.error("bindingService onFailure {}", message);
+                sLogger.error("bindService onFailure {}", message);
             }
         });
     }

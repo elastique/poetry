@@ -606,6 +606,7 @@ public class JsonPersister
 
         List<Object> target_target_ids = persistArrayOfObjects(target_target_field.getType(), foreignCollectionMapping.getJsonArray());
 
+        // TODO: cache table name
         String target_table_name = OrmliteReflection.getTableName(target_class);
         DatabaseField target_foreign_db_field = mAnnotationRetriever.getAnnotation(target_foreign_field, DatabaseField.class);
         String target_foreign_field_name = OrmliteReflection.getFieldName(target_foreign_field, target_foreign_db_field);

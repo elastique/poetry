@@ -13,6 +13,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ForeignCollectionFieldSingleTarget
 {
-    String targetField(); // target field name
+    String targetField(); // target database column name
 }
 

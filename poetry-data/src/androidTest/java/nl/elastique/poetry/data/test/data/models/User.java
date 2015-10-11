@@ -1,9 +1,15 @@
 package nl.elastique.poetry.data.test.data.models;
 
+import android.content.Context;
+import android.nfc.Tag;
+
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import nl.elastique.poetry.data.json.annotations.ForeignCollectionFieldSingleTarget;
 import nl.elastique.poetry.data.json.annotations.ManyToManyField;
