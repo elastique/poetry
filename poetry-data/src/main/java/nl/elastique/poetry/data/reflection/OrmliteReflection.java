@@ -27,16 +27,16 @@ public class OrmliteReflection
      * @param modelClass an OrmLite model class annotated with {@link DatabaseTable}
      * @return the SQLite table name
      */
-    public static String getTableName(Class<?> modelClass)
+    public static String getTableName(AnnotationRetriever annotationRetriever, Class<?> modelClass)
     {
-        DatabaseTable table_annotation = modelClass.getAnnotation(DatabaseTable.class);
+        DatabaseTable table_annotation = annotationRetriever.getAnnotation(modelClass, DatabaseTable.class);
 
         if (table_annotation == null)
         {
             throw new RuntimeException("DatabaseTable annotation not found for " + modelClass.getName());
         }
 
-        return !table_annotation.tableName().isEmpty() ? table_annotation.tableName() : modelClass.getSimpleName();
+        return getTableName(modelClass, table_annotation);
     }
 
     /**
@@ -55,18 +55,16 @@ public class OrmliteReflection
      * @param field the model's field
      * @return the SQLite column name
      */
-    public static String getFieldName(Field field)
+    public static String getFieldName(AnnotationRetriever annotationRetriever, Field field)
     {
-        DatabaseField database_field = field.getAnnotation(DatabaseField.class);
+        DatabaseField database_field = annotationRetriever.getAnnotation(field, DatabaseField.class);
 
         if (database_field == null)
         {
             throw new RuntimeException("DatabaseField annotation not found in " + field.getDeclaringClass().getName() + " for " + field.getName());
         }
 
-        // TODO: investigate why getFieldName(Field, DatabaseField) is not called here
-
-        return !database_field.columnName().isEmpty() ? database_field.columnName() : field.getName();
+        return getFieldName(field, database_field);
     }
 
     /**
@@ -110,70 +108,6 @@ public class OrmliteReflection
     }
 
     /**
-     * Find a field in a model, providing its JSON attribute name
-     * @param modelClass the model class
-     * @param name the name of the JSON field
-     * @return the Field that is found or null
-     */
-    public static @Nullable Field findField(Class<?> modelClass, String name)
-    {
-        // Check all the fields in the model
-        for (Field field : modelClass.getDeclaredFields())
-        {
-			// Direct match?
-            if (field.getName().equals(name))
-            {
-                return field;
-            }
-
-			// MapFrom-annotated match?
-			MapFrom map_from = field.getAnnotation(MapFrom.class);
-
-			if (map_from != null && name.equals(map_from.value()))
-			{
-				return field;
-			}
-        }
-
-        if (modelClass.getSuperclass() != null)
-        {
-            // Recursively check superclass
-            return findField(modelClass.getSuperclass(), name);
-        }
-        else
-        {
-            return null;
-        }
-    }
-
-    /**
-     * Finds a field of a certain type in a given table type
-     * @param modelClass the class of the model to check
-     * @param fieldType the class of the field type to search for
-     * @return the found Field or null
-     */
-    public static @Nullable Field findFirstField(Class<?> modelClass, Class<?> fieldType)
-    {
-        for (Field field : modelClass.getDeclaredFields())
-        {
-            if (field.getType().equals(fieldType))
-            {
-                return field;
-            }
-        }
-
-        if (modelClass.getSuperclass() != null)
-        {
-            // Recursively check superclass
-            return findFirstField(modelClass.getSuperclass(), fieldType);
-        }
-        else
-        {
-            return null;
-        }
-    }
-
-    /**
      * Retrieves the generic type argument: the type that is held by the specified ForeignCollection Field
      * @param field a {@link Field} that holds the type {@link com.j256.ormlite.dao.ForeignCollection}
      * @throws RuntimeException when the Field is not a ForeignCollection
@@ -197,11 +131,11 @@ public class OrmliteReflection
      * Find a Field with a DatabaseField annotation that defines it as being an id column.
      * @return the Field or null
      */
-    public static @Nullable Field findIdField(Class<?> modelClass)
+    public static @Nullable Field findIdField(AnnotationRetriever annotationRetriever, Class<?> modelClass)
     {
         for (Field field : modelClass.getDeclaredFields())
         {
-            DatabaseField database_field = field.getAnnotation(DatabaseField.class);
+            DatabaseField database_field = annotationRetriever.getAnnotation(field, DatabaseField.class);
 
             if (database_field == null)
             {
@@ -217,7 +151,7 @@ public class OrmliteReflection
         if (modelClass.getSuperclass() != null)
         {
             // Recursively check superclass
-            return findIdField(modelClass.getSuperclass());
+            return findIdField(annotationRetriever, modelClass.getSuperclass());
         }
         else
         {
@@ -229,11 +163,11 @@ public class OrmliteReflection
      * Find a Field with a DatabaseField annotation that defines it as foreign.
      * @return a Field or null
      */
-    public static @Nullable Field findForeignField(Class<?> parentClass, Class<?> findClass)
+    public static @Nullable Field findForeignField(AnnotationRetriever annotationRetriever, Class<?> parentClass, Class<?> findClass)
     {
         for (Field field : parentClass.getDeclaredFields())
         {
-            DatabaseField database_field = field.getAnnotation(DatabaseField.class);
+            DatabaseField database_field = annotationRetriever.getAnnotation(field, DatabaseField.class);
 
             if (database_field != null && isForeign(database_field) && findClass.isAssignableFrom(field.getType()))
             {
@@ -244,7 +178,7 @@ public class OrmliteReflection
         if (parentClass.getSuperclass() != null)
         {
             // Recursively check superclass
-            return findForeignField(parentClass.getSuperclass(), findClass);
+            return findForeignField(annotationRetriever, parentClass.getSuperclass(), findClass);
         }
         else
         {

@@ -14,7 +14,7 @@ import nl.elastique.poetry.data.test.data.models.UserTag;
 
 public class DatabaseHelper extends nl.elastique.poetry.data.database.DatabaseHelper
 {
-    public final static DatabaseConfiguration sConfiguration = new DatabaseConfiguration(6, new Class<?>[]
+    public final static DatabaseConfiguration sConfiguration = new DatabaseConfiguration(7, new Class<?>[]
     {
         User.class,
         Group.class,

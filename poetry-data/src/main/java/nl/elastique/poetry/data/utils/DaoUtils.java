@@ -5,6 +5,7 @@ import com.j256.ormlite.dao.Dao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import nl.elastique.poetry.data.reflection.AnnotationRetriever;
 import nl.elastique.poetry.data.reflection.OrmliteReflection;
 
 public class DaoUtils
@@ -32,7 +33,7 @@ public class DaoUtils
     public static void addColumn(Dao<?, ?> dao, String name, ColumnType columnType) throws java.sql.SQLException
     {
         String query = String.format("ALTER TABLE %s ADD COLUMN %s %s",
-            OrmliteReflection.getTableName(dao.getDataClass()),
+            OrmliteReflection.getTableName(new AnnotationRetriever(), dao.getDataClass()),
             name,
             columnType.toString());
 
@@ -42,7 +43,7 @@ public class DaoUtils
     public static void addColumn(Dao<?, ?> dao, String name, ColumnType columnType, String defaultValue) throws java.sql.SQLException
     {
         String query = String.format("ALTER TABLE %s ADD COLUMN %s %s DEFAULT %s",
-            OrmliteReflection.getTableName(dao.getDataClass()),
+            OrmliteReflection.getTableName(new AnnotationRetriever(), dao.getDataClass()),
             name,
             columnType.toString(),
             defaultValue);
@@ -53,7 +54,7 @@ public class DaoUtils
     public static void copyColumn(Dao<?, ?> dao, String fromName, String toName) throws java.sql.SQLException
     {
         String query = String.format("UPDATE %s SET %s = %s",
-            OrmliteReflection.getTableName(dao.getDataClass()),
+            OrmliteReflection.getTableName(new AnnotationRetriever(), dao.getDataClass()),
             toName,
             fromName);
 
@@ -64,7 +65,7 @@ public class DaoUtils
     {
         String query = String.format("CREATE INDEX %s ON %s (%s)",
             indexName,
-            OrmliteReflection.getTableName(dao.getDataClass()),
+            OrmliteReflection.getTableName(new AnnotationRetriever(), dao.getDataClass()),
             columnName);
 
         executeQuery(dao, query);

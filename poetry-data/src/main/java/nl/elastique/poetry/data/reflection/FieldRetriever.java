@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 
 import nl.elastique.poetry.core.annotations.Nullable;
+import nl.elastique.poetry.data.json.annotations.MapFrom;
 
 /**
  * FieldRetriever caches {@link Field} objects to improve performance.
@@ -17,9 +18,17 @@ import nl.elastique.poetry.core.annotations.Nullable;
  */
 public class FieldRetriever
 {
-    private final HashMap<Class<?>, HashMap<String, Field>> mCache = new HashMap<>();
+	/**
+	 * Maps: model class -> json type -> Field instance
+	 */
+	private final HashMap<Class<?>, HashMap<String, Field>> mFieldJsonCache = new HashMap<>();
 
-    /**
+	/**
+	 * Maps: model class -> field type -> Field instance
+	 */
+	private final HashMap<Class<?>, HashMap<Class<?>, Field>> mFieldTypeCache = new HashMap<>();
+
+	/**
      * Retrieve a {@link Field} for a model.
      */
     public @Nullable Field getField(Class<?> modelClass, String jsonKey)
@@ -30,7 +39,7 @@ public class FieldRetriever
         // If not cached, try reflection
         if (field == null)
         {
-            field = OrmliteReflection.findField(modelClass, jsonKey);
+            field = findField(modelClass, jsonKey);
 
             // Null values are also cached because it will make the next failure quicker
             setCachedField(modelClass, jsonKey, field);
@@ -41,21 +50,126 @@ public class FieldRetriever
 
     private @Nullable Field getCachedField(Class<?> classObject, String fieldName)
     {
-        HashMap<String, Field> field_map = mCache.get(classObject);
+        HashMap<String, Field> field_map = mFieldJsonCache.get(classObject);
 
         return (field_map != null) ? field_map.get(fieldName) : null;
     }
 
     private void setCachedField(Class<?> classObject, String fieldName, Field field)
     {
-        HashMap<String, Field> field_map = mCache.get(classObject);
+        HashMap<String, Field> field_map = mFieldJsonCache.get(classObject);
 
         if (field_map == null)
         {
             field_map = new HashMap<>();
-            mCache.put(classObject, field_map);
+            mFieldJsonCache.put(classObject, field_map);
         }
 
         field_map.put(fieldName, field);
     }
+
+	/**
+	 * Find a field in a model, providing its JSON attribute name
+	 * @param modelClass the model class
+	 * @param name the name of the JSON field
+	 * @return the Field that is found or null
+	 */
+	private @Nullable Field findField(Class<?> modelClass, String name)
+	{
+		// Check all the fields in the model
+		for (Field field : modelClass.getDeclaredFields())
+		{
+			// Direct match?
+			if (field.getName().equals(name))
+			{
+				return field;
+			}
+
+			// MapFrom-annotated match?
+			MapFrom map_from = field.getAnnotation(MapFrom.class);
+
+			if (map_from != null && name.equals(map_from.value()))
+			{
+				return field;
+			}
+		}
+
+		if (modelClass.getSuperclass() != null)
+		{
+			// Recursively check superclass
+			return findField(modelClass.getSuperclass(), name);
+		}
+		else
+		{
+			return null;
+		}
+	}
+
+	/**
+	 * Retrieve a {@link Field} for a model.
+	 */
+	public @Nullable Field getFirstFieldOfType(Class<?> parentClass, Class<?> fieldClass)
+	{
+		// Try to retrieve it from cache
+		Field field = getCachedField(parentClass, fieldClass);
+
+		// If not cached, try reflection
+		if (field == null)
+		{
+			field = findFirstFieldOfType(parentClass, fieldClass);
+
+			// Null values are also cached because it will make the next failure quicker
+			setCachedField(parentClass, fieldClass, field);
+		}
+
+		return field;
+	}
+
+	private @Nullable Field getCachedField(Class<?> parentClass, Class<?> fieldClass)
+	{
+		HashMap<Class<?>, Field> field_map = mFieldTypeCache.get(parentClass);
+
+		return (field_map != null) ? field_map.get(fieldClass) : null;
+	}
+
+	private void setCachedField(Class<?> parentClass, Class<?> fieldClass, Field field)
+	{
+		HashMap<Class<?>, Field> field_map = mFieldTypeCache.get(parentClass);
+
+		if (field_map == null)
+		{
+			field_map = new HashMap<>();
+			mFieldTypeCache.put(parentClass, field_map);
+		}
+
+		field_map.put(fieldClass, field);
+	}
+
+	/**
+	 * Finds a field of a certain type in a given parent type
+	 * @param parentClass the parent class that holds the field
+	 * @param fieldClass the field class to search for
+	 * @return the found first Field of the specified type or null
+	 */
+	public static @Nullable Field findFirstFieldOfType(Class<?> parentClass, Class<?> fieldClass)
+	{
+		for (Field field : parentClass.getDeclaredFields())
+		{
+			if (field.getType().equals(fieldClass))
+			{
+				return field;
+			}
+		}
+
+		if (parentClass.getSuperclass() != null)
+		{
+			// Recursively check superclass
+			return findFirstFieldOfType(parentClass.getSuperclass(), fieldClass);
+		}
+		else
+		{
+			return null;
+		}
+	}
+
 }

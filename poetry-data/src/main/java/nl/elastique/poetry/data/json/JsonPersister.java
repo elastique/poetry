@@ -376,7 +376,7 @@ public class JsonPersister
 
         if (object_id == null || id_field_name == null)
         {
-            Field id_field = OrmliteReflection.findIdField(modelClass);
+            Field id_field = OrmliteReflection.findIdField(mAnnotationRetriever, modelClass);
 
             if (id_field == null)
             {
@@ -542,7 +542,7 @@ public class JsonPersister
 			{
 				//The JSON does not include the foreign object, see if it is a valid key for the foreign object
 
-				Field foreign_object_id_field = OrmliteReflection.findIdField(field.getType());
+				Field foreign_object_id_field = OrmliteReflection.findIdField(mAnnotationRetriever, field.getType());
 
 				if (foreign_object_id_field == null)
 				{
@@ -583,21 +583,21 @@ public class JsonPersister
         Field foreign_collection_field = foreignCollectionMapping.getField();
 
         Class<?> target_class = OrmliteReflection.getForeignCollectionParameterType(foreign_collection_field);
-        Field target_id_field = OrmliteReflection.findIdField(target_class);
+        Field target_id_field = OrmliteReflection.findIdField(mAnnotationRetriever, target_class);
 
         if (target_id_field == null)
         {
             throw new RuntimeException("no id field found while processing foreign collection relation for " + target_class.getName());
         }
 
-        Field target_foreign_field = OrmliteReflection.findForeignField(target_class, parentClass);
+        Field target_foreign_field = OrmliteReflection.findForeignField(mAnnotationRetriever, target_class, parentClass);
 
         if (target_foreign_field == null)
         {
             throw new RuntimeException("no foreign field found while processing foreign collection relation for " + target_class.getName());
         }
 
-        Field target_target_field = OrmliteReflection.findFirstField(target_class, manyToManyField.targetType());
+        Field target_target_field = mFieldRetriever.getFirstFieldOfType(target_class, manyToManyField.targetType());
 
         if (target_target_field == null)
         {
@@ -607,7 +607,7 @@ public class JsonPersister
         List<Object> target_target_ids = persistArrayOfObjects(target_target_field.getType(), foreignCollectionMapping.getJsonArray());
 
         // TODO: cache table name
-        String target_table_name = OrmliteReflection.getTableName(target_class);
+        String target_table_name = OrmliteReflection.getTableName(mAnnotationRetriever, target_class);
         DatabaseField target_foreign_db_field = mAnnotationRetriever.getAnnotation(target_foreign_field, DatabaseField.class);
         String target_foreign_field_name = OrmliteReflection.getFieldName(target_foreign_field, target_foreign_db_field);
 
@@ -651,14 +651,14 @@ public class JsonPersister
         Field foreign_collection_field = foreignCollectionMapping.getField();
 
         Class<?> target_class = OrmliteReflection.getForeignCollectionParameterType(foreign_collection_field);
-        Field target_id_field = OrmliteReflection.findIdField(target_class);
+        Field target_id_field = OrmliteReflection.findIdField(mAnnotationRetriever, target_class);
 
         if (target_id_field == null)
         {
             throw new RuntimeException("no id field found while processing foreign collection relation for " + target_class.getName());
         }
 
-        Field target_foreign_field = OrmliteReflection.findForeignField(target_class, parentClass);
+        Field target_foreign_field = OrmliteReflection.findForeignField(mAnnotationRetriever, target_class, parentClass);
 
         if (target_foreign_field == null)
         {
@@ -692,8 +692,8 @@ public class JsonPersister
         String in_clause = QueryUtils.createInClause(target_ids, target_id_args);
 
         // update references to all target objects
-        String target_table_name = OrmliteReflection.getTableName(target_class);
-        String target_id_field_name = OrmliteReflection.getFieldName(target_id_field);
+        String target_table_name = OrmliteReflection.getTableName(mAnnotationRetriever, target_class);
+        String target_id_field_name = OrmliteReflection.getFieldName(mAnnotationRetriever, target_id_field);
 
         String update_select_clause = target_id_field_name + " " + in_clause;
         mDatabase.update("'" + target_table_name + "'", values, update_select_clause, target_id_args);

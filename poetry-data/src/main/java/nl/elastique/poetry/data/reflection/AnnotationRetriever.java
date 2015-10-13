@@ -18,45 +18,89 @@ import nl.elastique.poetry.core.annotations.Nullable;
  */
 public class AnnotationRetriever
 {
-    private final HashMap<Field, HashMap<Class<? extends Annotation>, Annotation> > mCache = new HashMap<>();
+	private final HashMap<Field, HashMap<Class<? extends Annotation>, Annotation> > mFieldAnnotationCache = new HashMap<>();
 
-    /**
-     * Retrieve a {@link Field} for a model.
-     */
-    public @Nullable <AnnotationType extends Annotation> AnnotationType getAnnotation(Field field, Class<AnnotationType> annotationClass)
-    {
-        // Try to retrieve it from cache
-        Annotation annotation = getCachedAnnotation(field, annotationClass);
+	private final HashMap<Class<?>, HashMap<Class<? extends Annotation>, Annotation> > mClassAnnotationCache = new HashMap<>();
 
-        // If not cached, try reflection
-        if (annotation == null)
-        {
-            annotation = field.getAnnotation(annotationClass);
+	/**
+	 * Retrieve a {@link Field} for a Field.
+	 */
+	public @Nullable <AnnotationType extends Annotation> AnnotationType getAnnotation(Field field, Class<AnnotationType> annotationClass)
+	{
+		// Try to retrieve it from cache
+		Annotation annotation = getCachedAnnotation(field, annotationClass);
 
-            // Null values are also cached because it will make the next failure quicker
-            setCachedAnnotation(field, annotationClass, annotation);
-        }
+		// If not cached, try reflection
+		if (annotation == null)
+		{
+			annotation = field.getAnnotation(annotationClass);
 
-        return (AnnotationType)annotation;
-    }
+			// Null values are also cached because it will make the next failure quicker
+			setCachedAnnotation(field, annotationClass, annotation);
+		}
 
-    private @Nullable Annotation getCachedAnnotation(Field field, Class<? extends Annotation> annotationClass)
-    {
-        HashMap<Class<? extends Annotation>, Annotation> annotation_map = mCache.get(field);
+		return (AnnotationType)annotation;
+	}
 
-        return (annotation_map != null) ? annotation_map.get(annotationClass) : null;
-    }
+	private @Nullable Annotation getCachedAnnotation(Field field, Class<? extends Annotation> annotationClass)
+	{
+		HashMap<Class<? extends Annotation>, Annotation> annotation_map = mFieldAnnotationCache.get(field);
 
-    private void setCachedAnnotation(Field field, Class<? extends Annotation> annotationClass, Annotation annotation)
-    {
-        HashMap<Class<? extends Annotation>, Annotation> annotation_map = mCache.get(field);
+		return (annotation_map != null) ? annotation_map.get(annotationClass) : null;
+	}
 
-        if (annotation_map == null)
-        {
-            annotation_map = new HashMap<>();
-            mCache.put(field, annotation_map);
-        }
+	private void setCachedAnnotation(Field field, Class<? extends Annotation> annotationClass, Annotation annotation)
+	{
+		HashMap<Class<? extends Annotation>, Annotation> annotation_map = mFieldAnnotationCache.get(field);
 
-        annotation_map.put(annotationClass, annotation);
-    }
+		if (annotation_map == null)
+		{
+			annotation_map = new HashMap<>();
+			mFieldAnnotationCache.put(field, annotation_map);
+		}
+
+		annotation_map.put(annotationClass, annotation);
+	}
+
+	/**
+	 * Retrieve a {@link Field} for a class.
+	 * @param parentClass the class to retrieve the annotation from
+	 * @param annotationClass the annotation type to search for
+	 */
+	public @Nullable <AnnotationType extends Annotation> AnnotationType getAnnotation(Class<?> parentClass, Class<AnnotationType> annotationClass)
+	{
+		// Try to retrieve it from cache
+		Annotation annotation = getCachedAnnotation(parentClass, annotationClass);
+
+		// If not cached, try reflection
+		if (annotation == null)
+		{
+			annotation = parentClass.getAnnotation(annotationClass);
+
+			// Null values are also cached because it will make the next failure quicker
+			setCachedAnnotation(parentClass, annotationClass, annotation);
+		}
+
+		return (AnnotationType)annotation;
+	}
+
+	private @Nullable Annotation getCachedAnnotation(Class<?> parentClass, Class<? extends Annotation> annotationClass)
+	{
+		HashMap<Class<? extends Annotation>, Annotation> annotation_map = mClassAnnotationCache.get(parentClass);
+
+		return (annotation_map != null) ? annotation_map.get(annotationClass) : null;
+	}
+
+	private void setCachedAnnotation(Class<?> parentClass, Class<? extends Annotation> annotationClass, Annotation annotation)
+	{
+		HashMap<Class<? extends Annotation>, Annotation> annotation_map = mClassAnnotationCache.get(parentClass);
+
+		if (annotation_map == null)
+		{
+			annotation_map = new HashMap<>();
+			mClassAnnotationCache.put(parentClass, annotation_map);
+		}
+
+		annotation_map.put(annotationClass, annotation);
+	}
 }
