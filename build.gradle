@@ -1,3 +1,11 @@
+apply from: 'android-library.gradle'
+apply plugin: 'bintray-release'
+
+ext {
+    ormliteVersion = '4.48';
+    jacksonVersion = '2.3.+';
+}
+
 buildscript {
     repositories {
         mavenCentral()
@@ -12,8 +20,33 @@ buildscript {
     }
 }
 
-allprojects {
-    repositories {
-        mavenCentral()
-    }
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile (
+        [group: 'com.android.support', name: 'support-v4', version: '22+'],
+
+        // ORM
+        [group: 'com.j256.ormlite', name: 'ormlite-core', version: ormliteVersion],
+        [group: 'com.j256.ormlite', name: 'ormlite-android', version: ormliteVersion],
+
+        [group: 'org.slf4j' , name: 'slf4j-api' , version: slf4jVersion]
+
+    )
+
+    androidTestCompile(
+        [group: 'org.apache.directory.studio', name: 'org.apache.commons.io', version: '2.4']
+    )
+}
+
+publish {
+    userOrg = poetryUserOrg
+    repoName = poetryRepoName
+    groupId = poetryGroupId
+    artifactId = 'poetry'
+    version = poetryVersion
+    description = 'Elastique Poetry'
+    website = poetryWebsite
 }
