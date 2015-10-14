@@ -1,7 +1,7 @@
 Poetry
 ======
 
-Poetry is a persistence library that allows you to persist a JSON object tree directly into an SQLite database (through [OrmLite]).
+Poetry is an Android persistence library that allows you to persist a JSON object tree directly into an SQLite database (through [OrmLite]).
 Poetry enables you to write less code and persist data much faster.
 
 Consider this JSON:
@@ -42,10 +42,10 @@ Features
 	* Many-to-many
 * Arrays of base types (e.g. JSON String array persisted to separate table)
 
-Library components
+Requirements
 ----
-* <strong>poetry-core</strong>: core Java and Android utilities
-* <strong>poetry-data</strong>: persistence and json processing
+
+- Android 2.3 or higher
 
 License
 ----
@@ -69,8 +69,7 @@ repositories {
 ```
 dependencies {
     compile (
-        [group: 'nl.elastique.poetry', name: 'poetry-core', version: '2.2.0'],
-        [group: 'nl.elastique.poetry', name: 'poetry-data', version: '2.2.0']
+        [group: 'nl.elastique.poetry', name: 'poetry', version: '3.0.0']
     )
 }
 ```

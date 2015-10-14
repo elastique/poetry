@@ -1,12 +1,16 @@
-## 2.4.0 (tbd)
+## 3.0.0 
 
-Features:
-- refactored LocalServiceProvider.bindService method order so it is more consistent
-- improved tests
+Improvements:
+ - improved tests
+
+Deprecations:
+ - merged poetry-core and poetry-data into one library project: poetry
+ - removed (unused) Callback code
+ - removed (unused) service-related code
 
 ## 2.3.0 (2015-10-10)
 
-Features:
+Improvements:
  - performance improvements for big datasets with JsonPersister
 
 ## 2.2.0 (2015-10-07)
@@ -17,7 +21,7 @@ Bugfixes:
 
 ## 2.1.0 (2015-09-25)
 
-Features:
+Improvements:
  - added MapFrom annotation
  
 ## 2.0.0 (2015-09-15)
@@ -27,22 +31,22 @@ Deprecations:
 
 ## 1.2.0 (2015-09-02)
 
-Features:
+Improvements:
  - added ability to persist foreign relationships when only an ID is provided in JSON
    (rather than an object with an ID embedded in it)
 
 ## 1.1.0 (2015-06-05)
 
-Deprecations:
-  - removed HttpRequestJsonPersister
-  - removed MappedJsonPersister
+Improvements:
+  - added first test
+  - created demo project
 
 Bugfixes:
   - fix for reserved table names (e.g. "Group")
 
-Features:
-  - added first test
-  - created demo project
+Deprecations:
+  - removed HttpRequestJsonPersister
+  - removed MappedJsonPersister
 
 ## 1.0.0
 
