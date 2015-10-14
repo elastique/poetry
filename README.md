@@ -45,7 +45,7 @@ Features
 Requirements
 ----
 
-- Android 2.3 or higher
+- Android 2.3.3 (API level 10) or higher
 
 License
 ----
