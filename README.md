@@ -44,8 +44,8 @@ Features
 
 Library components
 ----
-* <strong>poetry-core</strong>: core Java and Android utilities
-* <strong>poetry-data</strong>: persistence and json processing
+* **poetry-core**: core Java and Android utilities
+* **poetry-data**: persistence and json processing
 
 License
 ----
@@ -57,7 +57,7 @@ Usage
 
 <strong>build.gradle</strong>
 
-```
+```groovy
 repositories {
     mavenCentral()
     maven {
@@ -66,7 +66,7 @@ repositories {
 }
 ```
 
-```
+```groovy
 dependencies {
     compile (
         [group: 'nl.elastique.poetry', name: 'poetry-core', version: '2.3.0'],
