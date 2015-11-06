@@ -6,6 +6,15 @@ import java.util.List;
 
 public class QueryUtils
 {
+    /**
+     * Convert an Object to a String so that it can be used as a query parameter.
+     * This method supports objects instantiated or derived from:
+     * Integer, Long, Float, Double, Boolean, Short, Byte, CharSequence and Date
+     *
+     * @param object the object to convert
+     * @return the String representing the input object
+     * @throws InvalidParameterException when the input object is not supported
+     */
     public static String parseAttribute(Object object) throws InvalidParameterException
     {
         if (Integer.class.isAssignableFrom(object.getClass()))
@@ -28,10 +37,6 @@ public class QueryUtils
         {
             return Boolean.toString((Boolean)object);
         }
-        else if (Float.class.isAssignableFrom(object.getClass()))
-        {
-            return Float.toString((Float)object);
-        }
         else if (Short.class.isAssignableFrom(object.getClass()))
         {
             return Short.toString((Short)object);
@@ -51,14 +56,15 @@ public class QueryUtils
     }
 
     /**
-     * Creates an "IN (?, ...)" query and outputs target ids
-     * @param targetIds
-     * @param targetIdArgs
-     * @return
+     * Creates an "IN (?, ...)" query and outputs target ids.
+     *
+     * @param targetIds a list of IDs for the query
+     * @param outputQueryArgs the array that will hold the output values for the query
+     * @return the query part
      */
-    public static String createInClause(List<Object> targetIds, String[] targetIdArgs)
+    public static String createInClause(List<Object> targetIds, String[] outputQueryArgs)
     {
-        if (targetIdArgs.length != targetIds.size())
+        if (outputQueryArgs.length != targetIds.size())
         {
             throw new RuntimeException("targetIds and targetIdArgs must be the same size");
         }
@@ -69,7 +75,7 @@ public class QueryUtils
 
         for (int i = 0; i < targetIds.size(); ++i)
         {
-            targetIdArgs[i] = parseAttribute(targetIds.get(i));
+            outputQueryArgs[i] = parseAttribute(targetIds.get(i));
 
             in_clause_builder.append('?');
 

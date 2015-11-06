@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
 public @interface MapFrom
 {
 	/**
-	 * The name of the property.
+	 * @return The name of the property.
 	 */
 	String value();
 }

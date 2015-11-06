@@ -80,7 +80,9 @@ public class JsonPersister
     }
 
     /**
-     * @param writableDatabase
+     * Constructor.
+     *
+     * @param writableDatabase the database used for persistence
      * @param options 0 or a combination of 1 or more {@link nl.elastique.poetry.json.JsonPersister.Option} values
      */
     public JsonPersister(SQLiteDatabase writableDatabase, int options)
@@ -121,6 +123,11 @@ public class JsonPersister
 
     /**
      * Recursively persist this object and all its children.
+     *
+     * @param modelClass the type to persist
+     * @param jsonObject the json to process
+     * @param <IdType> the ID type to return
+     * @return the ID of the persisted object
      * @throws JSONException when something went wrong through parsing, this also fails the database transaction and results in no data changes
      */
     public <IdType> IdType persistObject(Class<?> modelClass, JSONObject jsonObject) throws JSONException
@@ -142,6 +149,11 @@ public class JsonPersister
 
     /**
      * Recursively persist the array and all its object's children.
+     *
+     * @param modelClass the type to persist
+     * @param jsonArray the json to process
+     * @param <IdType> the ID type to return
+     * @return the list of IDs of the persisted objects
      * @throws JSONException when something went wrong through parsing, this also fails the database transaction and results in no data changes
      */
     public <IdType> List<IdType> persistArray(Class<?> modelClass, JSONArray jsonArray) throws JSONException
@@ -183,10 +195,6 @@ public class JsonPersister
         }
     }
 
-    /**
-     * Recursively persist the array and all its object's children.
-     * @throws JSONException when something went wrong through parsing, this also fails the database transaction and results in no data changes
-     */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     private <IdType> List<IdType> persistArrayApi11(Class<?> modelClass, JSONArray jsonArray) throws JSONException
     {
@@ -230,10 +238,6 @@ public class JsonPersister
         }
     }
 
-    /**
-     * Recursively persist the array and all its object's children.
-     * @throws JSONException when something went wrong through parsing, this also fails the database transaction and results in no data changes
-     */
     private <IdType> List<IdType> persistArrayDeprecate(Class<?> modelClass, JSONArray jsonArray) throws JSONException
     {
         try
@@ -296,12 +300,13 @@ public class JsonPersister
     }
 
     /**
+     * Main persistence method for persisting a single object
      *
-     * @param modelClass
-     * @param jsonObject
-     * @param <IdType>
+     * @param modelClass the type to persist
+     * @param jsonObject the json data to persist
+     * @param <IdType> the ID type to return
      * @return the object ID (never null)
-     * @throws JSONException
+     * @throws JSONException when json processing fails
      */
     private <IdType> IdType persistObjectInternal(Class<?> modelClass, JSONObject jsonObject) throws JSONException
     {
@@ -374,6 +379,7 @@ public class JsonPersister
             }
         }
 
+        // Determine the object ID
         if (object_id == null || id_field_name == null)
         {
             Field id_field = OrmliteReflection.findIdField(mAnnotationRetriever, modelClass);

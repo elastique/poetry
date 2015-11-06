@@ -29,9 +29,13 @@ public class FieldRetriever
 	private final HashMap<Class<?>, HashMap<Class<?>, Field>> mFieldTypeCache = new HashMap<>();
 
 	/**
-     * Retrieve a {@link Field} for a model.
-     */
-    public @Nullable Field getField(Class<?> modelClass, String jsonKey)
+	 * Retrieve a {@link Field} for a model.
+	 *
+	 * @param modelClass the class to search for the Field
+	 * @param jsonKey the json key that is mapped to the field
+	 * @return the found Field or null
+	 */
+	public @Nullable Field getField(Class<?> modelClass, String jsonKey)
     {
         // Try to retrieve it from cache
         Field field = getCachedField(modelClass, jsonKey);
@@ -70,6 +74,7 @@ public class FieldRetriever
 
 	/**
 	 * Find a field in a model, providing its JSON attribute name
+	 *
 	 * @param modelClass the model class
 	 * @param name the name of the JSON field
 	 * @return the Field that is found or null
@@ -107,6 +112,10 @@ public class FieldRetriever
 
 	/**
 	 * Retrieve a {@link Field} for a model.
+	 *
+	 * @param parentClass the class to search for the Field
+	 * @param fieldClass the Field class to search for
+	 * @return the found Field or null
 	 */
 	public @Nullable Field getFirstFieldOfType(Class<?> parentClass, Class<?> fieldClass)
 	{
@@ -147,6 +156,7 @@ public class FieldRetriever
 
 	/**
 	 * Finds a field of a certain type in a given parent type
+	 *
 	 * @param parentClass the parent class that holds the field
 	 * @param fieldClass the field class to search for
 	 * @return the found first Field of the specified type or null
@@ -171,5 +181,4 @@ public class FieldRetriever
 			return null;
 		}
 	}
-
 }

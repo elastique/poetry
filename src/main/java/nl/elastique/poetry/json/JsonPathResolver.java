@@ -5,7 +5,7 @@ import org.json.JSONObject;
 
 /**
  * Given a JSON Object { 'root' : { 'key' : 'value' }}
- * It can resolve the String "value" when given the path "root/key"
+ * It can resolve the String "value" when given the path "root.key"
  */
 public class JsonPathResolver
 {
@@ -16,6 +16,13 @@ public class JsonPathResolver
         mPath = path;
     }
 
+    /**
+     * Resolve a path for the provided object.
+     * @param object the object to resolve the path for
+     * @param path the path to resolve
+     * @return the found JSONObject on the path
+     * @throws JsonPathException if processing fails
+     */
     public static JSONObject resolveObject(JSONObject object, String path) throws JsonPathException
     {
         boolean is_root_path = (path == null) || path.isEmpty();
@@ -77,6 +84,13 @@ public class JsonPathResolver
         throw new JsonPathException("json path mapping failed");
     }
 
+    /**
+     * Resolve a path for the provided object.
+     * @param object the object to resolve the path for
+     * @param path the path to resolve
+     * @return the found JSONArray on the path
+     * @throws JsonPathException if processing fails
+     */
     public static JSONArray resolveArray(JSONObject object, String path) throws JsonPathException
     {
         boolean is_root_path = (path == null) || path.isEmpty();
@@ -132,9 +146,13 @@ public class JsonPathResolver
     }
 
     /**
+     * Resolve the path for the provided object.
      * @param object must be a JSONObject or JSONArray
-     * @throws JsonPathException
+     * @return an object that is either a JSONObject or a JSONArray
+     * @throws JsonPathException when resolving fails
+     * @deprecated use resolveObject() or resolveArray() instead they are more type-safe
      */
+    @Deprecated
     public Object resolvePath(Object object) throws JsonPathException
     {
         boolean is_json_object = JSONObject.class.isAssignableFrom(object.getClass());

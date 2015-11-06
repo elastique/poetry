@@ -24,6 +24,11 @@ public class AnnotationRetriever
 
 	/**
 	 * Retrieve a {@link Field} for a Field.
+	 *
+	 * @param field the Field to search for the Annotation
+	 * @param annotationClass the annotation class to search for
+	 * @param <AnnotationType> the annotation type to search for
+	 * @return the found Annotation or null
 	 */
 	public @Nullable <AnnotationType extends Annotation> AnnotationType getAnnotation(Field field, Class<AnnotationType> annotationClass)
 	{
@@ -64,8 +69,11 @@ public class AnnotationRetriever
 
 	/**
 	 * Retrieve a {@link Field} for a class.
+	 *
 	 * @param parentClass the class to retrieve the annotation from
 	 * @param annotationClass the annotation type to search for
+	 * @param <AnnotationType> the annotation type to search for
+	 * @return the Annotation or null
 	 */
 	public @Nullable <AnnotationType extends Annotation> AnnotationType getAnnotation(Class<?> parentClass, Class<AnnotationType> annotationClass)
 	{

@@ -14,6 +14,8 @@ public @interface ManyToManyField
 {
     /**
      * The target type that contains 2 fields (one from each type) with a DatabaseField annotation.
+     *
+     * @return the type to target
      */
     Class<?> targetType();
 }

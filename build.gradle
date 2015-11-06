@@ -8,10 +8,16 @@ ext {
     poetryWebsite = 'https://github.com/elastique/poetry'
     poetryGroupId = 'nl.elastique.poetry'
     poetryRepoName = 'poetry'
+    poetryName = 'Elastique Poetry'
+
     // Libraries
     slf4jVersion = '1.7.+'
     ormliteVersion = '4.48'
     jacksonVersion = '2.3.+'
+    androidSupportLibraryVersion = '23+'
+    androidBuildToolsVersion = '23.0.2'
+    androidTargetSdkVersion = 23
+    androidCompileSdkVersion = 23
 }
 
 buildscript {
@@ -34,7 +40,7 @@ repositories {
 
 dependencies {
     compile (
-        [group: 'com.android.support', name: 'support-v4', version: '22+'],
+        [group: 'com.android.support', name: 'support-v4', version: androidSupportLibraryVersion],
 
         // ORM
         [group: 'com.j256.ormlite', name: 'ormlite-core', version: ormliteVersion],
@@ -50,12 +56,12 @@ dependencies {
 }
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion '23.0.1'
+    compileSdkVersion androidCompileSdkVersion
+    buildToolsVersion androidBuildToolsVersion
 
     defaultConfig {
         minSdkVersion 10
-        targetSdkVersion 23
+        targetSdkVersion androidTargetSdkVersion
         testInstrumentationRunner 'android.test.InstrumentationTestRunner'
     }
 
@@ -85,7 +91,7 @@ android.libraryVariants.all { variant ->
 
 android.libraryVariants.all { variant ->
     task("generate${variant.name.capitalize()}Javadoc", type: Javadoc) {
-        title = "Poetry"
+        title = poetryName
         description "Generates Javadoc for $variant.name."
         source = variant.javaCompile.source
         classpath = files(variant.javaCompile.classpath.files, project.android.getBootClasspath())
@@ -104,6 +110,6 @@ publish {
     groupId = poetryGroupId
     artifactId = 'poetry'
     version = poetryVersion
-    description = 'Elastique Poetry'
+    description = poetryName
     website = poetryWebsite
 }

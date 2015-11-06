@@ -12,8 +12,6 @@ import nl.elastique.poetry.annotations.Nullable;
 
 /**
  * A set of reflection utilities for OrmLite to process and retrieve fields and annotations.
- *
- * @author Ken Van Hoeylandt
  */
 // TODO: most of these calls should be cached as is done in AnnotationRetriever/FieldRetriever
 public class OrmliteReflection
@@ -23,6 +21,8 @@ public class OrmliteReflection
 
     /**
      * Get the SQLite table name for an OrmLite model.
+     *
+     * @param annotationRetriever the annotation retriever that caches the annotations
      * @param modelClass an OrmLite model class annotated with {@link DatabaseTable}
      * @return the SQLite table name
      */
@@ -40,6 +40,7 @@ public class OrmliteReflection
 
     /**
      * Get the SQLite table name for an OrmLite model.
+     *
      * @param modelClass an OrmLite model class annotated with {@link DatabaseTable}
      * @param tableAnnotation the annotation to process
      * @return the SQLite table name
@@ -50,7 +51,9 @@ public class OrmliteReflection
     }
 
     /**
-     * Get SQLite column name for a given Field
+     * Get SQLite column name for a given Field.
+     *
+     * @param annotationRetriever the annotation retriever that caches the annotations
      * @param field the model's field
      * @return the SQLite column name
      */
@@ -67,7 +70,8 @@ public class OrmliteReflection
     }
 
     /**
-     * Get SQLite column name for a given Field
+     * Get SQLite column name for a given Field.
+     *
      * @param field the model's field
      * @param databaseField the DatabaseField annotation for the specified Field
      * @return the SQLite column name
@@ -89,6 +93,8 @@ public class OrmliteReflection
     }
 
     /**
+     * Check if the provided DatabaseField is a foreign field.
+     *
      * @param databaseField the annotation to check
      * @return true if foreign() is true, foreignAutoRefresh() is true or foreignColumnName() is set to a non-empty string
      */
@@ -98,6 +104,8 @@ public class OrmliteReflection
     }
 
     /**
+     * Check if the DatabaseField is an ID field.
+     *
      * @param databaseField the annotation to check
      * @return true if id() or generatedId() are true
      */
@@ -108,6 +116,7 @@ public class OrmliteReflection
 
     /**
      * Retrieves the generic type argument: the type that is held by the specified ForeignCollection Field
+     *
      * @param field a {@link Field} that holds the type {@link com.j256.ormlite.dao.ForeignCollection}
      * @throws RuntimeException when the Field is not a ForeignCollection
      * @return the class
@@ -128,6 +137,9 @@ public class OrmliteReflection
 
     /**
      * Find a Field with a DatabaseField annotation that defines it as being an id column.
+     *
+     * @param annotationRetriever the annotation retriever that caches the annotations
+     * @param modelClass the class to find the ID field in
      * @return the Field or null
      */
     public static @Nullable Field findIdField(AnnotationRetriever annotationRetriever, Class<?> modelClass)
@@ -160,6 +172,10 @@ public class OrmliteReflection
 
     /**
      * Find a Field with a DatabaseField annotation that defines it as foreign.
+     *
+     * @param annotationRetriever the annotation retriever that caches the annotations
+     * @param parentClass the class to search for the Field
+     * @param findClass the field class to search for
      * @return a Field or null
      */
     public static @Nullable Field findForeignField(AnnotationRetriever annotationRetriever, Class<?> parentClass, Class<?> findClass)
