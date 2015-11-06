@@ -57,7 +57,7 @@ Usage
 
 <strong>build.gradle</strong>
 
-```
+```groovy
 repositories {
     mavenCentral()
     maven {
@@ -66,7 +66,7 @@ repositories {
 }
 ```
 
-```
+```groovy
 dependencies {
     compile (
         [group: 'nl.elastique.poetry', name: 'poetry', version: '3.0.0']
