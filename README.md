@@ -69,7 +69,7 @@ repositories {
 ```groovy
 dependencies {
     compile (
-        [group: 'nl.elastique.poetry', name: 'poetry', version: '3.0.0']
+        [group: 'nl.elastique.poetry', name: 'poetry', version: '3.0.1']
     )
 }
 ```

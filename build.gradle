@@ -3,7 +3,7 @@ apply plugin: 'bintray-release'
 
 ext {
     // Publishing
-    poetryVersion = '3.0.0'
+    poetryVersion = '3.0.1'
     poetryUserOrg = 'elastique'
     poetryWebsite = 'https://github.com/elastique/poetry'
     poetryGroupId = 'nl.elastique.poetry'

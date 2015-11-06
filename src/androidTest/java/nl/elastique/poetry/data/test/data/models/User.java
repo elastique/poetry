@@ -5,6 +5,9 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import nl.elastique.poetry.json.annotations.ForeignCollectionFieldSingleTarget;
 import nl.elastique.poetry.json.annotations.ManyToManyField;
 import nl.elastique.poetry.json.annotations.MapFrom;
@@ -38,7 +41,7 @@ public class User
      * JSON-to-SQLite persistence also requires the additional annotation "ForeignCollectionFieldSingleTarget" to
      * specify in which field of the UserTag table the simple type is stored. In this case the column name is "value":
      */
-    @ForeignCollectionField
+    @ForeignCollectionField(eager = true)
     @ForeignCollectionFieldSingleTarget(targetField = "value")
 	@MapFrom("tags")
     private ForeignCollection<UserTag> mTags;
@@ -52,4 +55,16 @@ public class User
 	{
 		return mName;
 	}
+
+    public List<String> getTags()
+    {
+        List<String> tags = new ArrayList<>();
+
+        for (UserTag tag : mTags)
+        {
+            tags.add(tag.getTag());
+        }
+
+        return tags;
+    }
 }

@@ -319,7 +319,7 @@ public class JsonPersister
 
         ContentValues values = new ContentValues();
         Iterator<?> json_keys = jsonObject.keys();
-        List<ForeignCollectionMapping> foreign_collection_mappings = new ArrayList<ForeignCollectionMapping>();
+        List<ForeignCollectionMapping> foreign_collection_mappings = new ArrayList<>();
 
         String table_name = OrmliteReflection.getTableName(modelClass, table_annotation);
 
@@ -432,7 +432,7 @@ public class JsonPersister
 
     private <IdType> List<IdType> persistArrayOfObjects(Class<?> modelClass, JSONArray jsonArray) throws JSONException
     {
-        List<IdType> results = new ArrayList<IdType>(jsonArray.length());
+        List<IdType> results = new ArrayList<>(jsonArray.length());
 
         for (int i = 0; i < jsonArray.length(); i++)
         {
@@ -446,20 +446,34 @@ public class JsonPersister
         return results;
     }
 
-    private <IdType> List<IdType> persistArrayOfBaseTypes(Class<?> modelClass, JSONArray jsonArray, ForeignCollectionFieldSingleTarget singleTargetField) throws JSONException
+    private List<Object> persistArrayOfBaseTypes(Class<?> modelClass, JSONArray jsonArray, ForeignCollectionFieldSingleTarget singleTargetField) throws JSONException
     {
-        List<IdType> results = new ArrayList<IdType>(jsonArray.length());
+        DatabaseTable table_annotation = modelClass.getAnnotation(DatabaseTable.class);
+
+        if (table_annotation == null)
+        {
+            throw new RuntimeException("DatabaseTable annotation not found for " + modelClass.getName());
+        }
+
+        String table_name = OrmliteReflection.getTableName(modelClass, table_annotation);
+
+        List<Object> results = new ArrayList<>(jsonArray.length());
 
         for (int i = 0; i < jsonArray.length(); i++)
         {
             Object value_object = jsonArray.get(i);
 
-            JSONObject intermediary = new JSONObject();
-            intermediary.put(singleTargetField.targetField(), value_object);
+            ContentValues content_values = new ContentValues();
+            content_values.put(singleTargetField.targetField(), value_object.toString());
 
-            IdType object_id = persistObjectInternal(modelClass, intermediary);
+            long inserted_id = mDatabase.insert("'" + table_name + "'", singleTargetField.targetField(), content_values);
 
-            results.add(object_id);
+            if (inserted_id == -1)
+            {
+                throw new SQLiteException("failed to insert " + modelClass.getName());
+            }
+
+            results.add(inserted_id);
         }
 
         return results;

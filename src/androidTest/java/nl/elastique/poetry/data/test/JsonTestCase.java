@@ -9,6 +9,7 @@ import org.json.JSONObject;
 
 import java.util.List;
 
+import nl.elastique.poetry.data.test.data.models.UserTag;
 import nl.elastique.poetry.json.JsonPathResolver;
 import nl.elastique.poetry.json.JsonPersister;
 import nl.elastique.poetry.data.test.data.DatabaseHelper;
@@ -44,8 +45,10 @@ public class JsonTestCase extends AndroidTestCase
         assertEquals(3, groups.size());
 
         User user = user_dao.queryForId(1);
-        assertNotNull(user);;
+        assertNotNull(user);
         assertEquals("John", user.getName());
+        assertEquals(2, user.getTags().size());
+        assertEquals("tag2", user.getTags().get(1));
 
         Group group = group_dao.queryForId(2);
         assertNotNull(group);
