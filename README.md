@@ -41,7 +41,8 @@ persister.persistObject(User.class, json_object);
 	* Many-to-one
 	* One-to-many
 	* Many-to-many
-* Support for persisting arrays of base types (e.g. JSON String array persisted to separate table)
+* Persist objects and arrays of objects
+* Persist objects with arrays of base types (e.g. JSON String array persisted to separate table)
 
 ## Requirements ##
 
@@ -72,6 +73,13 @@ dependencies {
 
 A [Demo] application is available on GitHub
 
+
+## Behaviors ##
+
+ * Models that are imported more than once within a single JSON tree are updated every time they are processed.
+ * Attributes that are not specified in JSON are not updated
+ * Attributes that are imported with null value will have a null value in the database. Make sure your model allows this.
+ * When you use `JsonPersister`'s `persistArray()` method, it will import the array and delete all objects from the database that do not correspond to any of the imported IDs.
 
 ## Tutorial ##
 
@@ -111,7 +119,7 @@ public class MyDatabaseHelper extends nl.elastique.poetry.database.DatabaseHelpe
 
 ### Mapping custom JSON properties ###
 
-With the `@MapFrom` annotation, you can specify the json key name.
+By default, the name of the attribute is used to map from JSON. Your naming conventions might now allow this. You can specify the json key name with the `@MapFrom` annotation.
 
 **User.java**
 ```java
@@ -163,7 +171,7 @@ public class Game
 **Player.java**
 ```java
 @DatabaseTable
-public class UserTag
+public class Player
 {
     @DatabaseField(id = true)
     public int id;
@@ -176,8 +184,6 @@ public class UserTag
 ### Many-to-many relationships ###
 
 In this example, a `User` can have 0 or more `Groups`, and a `Group` can have 0 or more `Users`.
-
-When an object occurs several times throughout the same JSON data, its data is just updated while it is being imported.
 
 **users.json**
 ```json
@@ -359,8 +365,8 @@ public class UserTag
 }
 ```
 
- [license-svg]: https://img.shields.io/badge/license-Apache%202.0-lightgrey.svg?style=flat
- [license-link]: https://github.com/elastique/poetry/blob/master/LICENSE
- [OrmLite]: http://ormlite.com
+[license-svg]: https://img.shields.io/badge/license-Apache%202.0-lightgrey.svg?style=flat
+[license-link]: https://github.com/elastique/poetry/blob/master/LICENSE
+[OrmLite]: http://ormlite.com
 [JSON]: http://json.org/java/
 [Demo]: https://github.com/elastique/poetry-demo
